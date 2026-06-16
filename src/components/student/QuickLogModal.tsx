@@ -27,6 +27,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
   const [error, setError] = useState<{title: string, message: string} | null>(null);
   const [students, setStudents] = useState<StudentOption[]>([]);
   const [newFocusArea, setNewFocusArea] = useState("");
+  const [shareLink, setShareLink] = useState<string | null>(null);
 
   // Timer State
   const [timerSeconds, setTimerSeconds] = useState(0);
@@ -243,41 +244,27 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         return;
       }
 
-      // Open a blank window synchronously to satisfy the browser's user-gesture policy
-      const whatsappWindow = window.open('', '_blank', 'noopener,noreferrer');
-      if (whatsappWindow) {
-        whatsappWindow.document.write('<p style="font-family:sans-serif; text-align:center; margin-top:20px; color:#6b7280;">Preparing your WhatsApp share message...</p>');
-      }
-
       // 5. Generate WhatsApp link
       const { link } = await generateWhatsAppLinkWithPhone({
         name: studentData.name,
         studentId: formData.studentId,
         date: formData.date,
         performance: formData.performance,
+        focus_areas: formData.focusAreas, // Changed parameter name to match schema/needs
         sessionNotes: formData.notes,
         homeworkAssignments: formData.homework,
-      }, studentData.parent_whatsapp);
+      } as any, studentData.parent_whatsapp);
 
-      // 6. Navigate the already opened window to the WhatsApp URL
-      if (whatsappWindow) {
-        whatsappWindow.location.href = link;
-      } else {
-        // Fallback
-        alert("Pop-up blocker active! Please allow pop-ups for Tutorly and try again.");
-      }
-
-      // 7. Cleanup and Close modal
+      // Set the generated share link state to trigger the success screen with native anchor
+      setShareLink(link);
       onSuccess();
-      onClose();
-      setTimerSeconds(0);
-      setTimerStatus('idle');
     } catch (err: any) {
       console.error("Error in handleFinalizeAndShare:", err);
       setError({ title: "Sync Error", message: err.message || "Failed to log and share session" });
     } finally {
       setLoading(false);
     }
+  };
   };
 
   // Modify handleSubmit to return success state
@@ -363,11 +350,55 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
           </button>
         </div>
 
-        {/* Content Section - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[#F8FAFC]">
-          
-          {/* Section 1: Session Details */}
-          <div className="grid grid-cols-2 gap-4">
+        {/* Content Section */}
+        {shareLink ? (
+          <div className="flex-1 overflow-y-auto p-8 text-center flex flex-col items-center justify-center space-y-6 bg-[#F8FAFC]">
+            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-2 border border-emerald-100">
+              <span className="material-symbols-outlined text-emerald-500 text-3xl font-bold">check_circle</span>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold text-[#1E3A5F] tracking-tight">Session Logged!</h3>
+              <p className="text-[#7F8C8D] mt-2 max-w-sm mx-auto text-sm leading-relaxed">
+                The session details have been saved successfully to your atelier. You can now share the progress report with the parent.
+              </p>
+            </div>
+
+            <div className="w-full max-w-sm flex flex-col gap-3 pt-4">
+              <a
+                href={shareLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  onClose();
+                  setShareLink(null);
+                  setTimerSeconds(0);
+                  setTimerStatus('idle');
+                }}
+                className="w-full h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20"
+                style={{ textDecoration: 'none' }}
+              >
+                <span className="material-symbols-outlined fill-white">share</span>
+                SHARE TO WHATSAPP
+              </a>
+              <button
+                onClick={() => {
+                  onClose();
+                  setShareLink(null);
+                  setTimerSeconds(0);
+                  setTimerStatus('idle');
+                }}
+                className="w-full h-14 border-2 border-slate-200 text-[#1E3A5F] rounded-xl font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[#F8FAFC]">
+            
+            {/* Section 1: Session Details */}
+            <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className={labelClass}>Select Student</label>
               <div className="relative">
@@ -621,46 +652,48 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Sticky Footer */}
-        <div className="sticky bottom-0 px-8 py-6 border-t border-[#1E3A5F]/5 bg-white flex flex-col md:flex-row gap-4 shrink-0 shadow-[0_-10px_40px_-15px_rgba(30,58,95,0.1)]">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 h-14 rounded-xl border-2 border-slate-200 text-[#1E3A5F] font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading || !formData.studentId}
-            style={{ border: `2px solid ${colors.navy}`, color: colors.navy }}
-            className="flex-1 h-14 rounded-xl font-bold hover:bg-slate-50 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-3 active:scale-95"
-          >
-            {loading ? "Processing..." : "Finalize & Log"}
-          </button>
-          <button
-            type="button"
-            onClick={handleFinalizeAndShare}
-            disabled={loading || !formData.studentId}
-            style={{ backgroundColor: colors.navy }}
-            className="flex-1 h-14 rounded-xl text-white font-bold hover:opacity-95 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs shadow-xl shadow-[#1E3A5F]/20 flex items-center justify-center gap-3 active:scale-95"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                Log & Share
-                <span className="material-symbols-outlined text-[18px]" style={{ color: '#25D366' }}>share</span>
-              </>
-            )}
-          </button>
-        </div>
+        {!shareLink && (
+          <div className="sticky bottom-0 px-8 py-6 border-t border-[#1E3A5F]/5 bg-white flex flex-col md:flex-row gap-4 shrink-0 shadow-[0_-10px_40px_-15px_rgba(30,58,95,0.1)]">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 h-14 rounded-xl border-2 border-slate-200 text-[#1E3A5F] font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading || !formData.studentId}
+              style={{ border: `2px solid ${colors.navy}`, color: colors.navy }}
+              className="flex-1 h-14 rounded-xl font-bold hover:bg-slate-50 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-3 active:scale-95"
+            >
+              {loading ? "Processing..." : "Finalize & Log"}
+            </button>
+            <button
+              type="button"
+              onClick={handleFinalizeAndShare}
+              disabled={loading || !formData.studentId}
+              style={{ backgroundColor: colors.navy }}
+              className="flex-1 h-14 rounded-xl text-white font-bold hover:opacity-95 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs shadow-xl shadow-[#1E3A5F]/20 flex items-center justify-center gap-3 active:scale-95"
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  Log & Share
+                  <span className="material-symbols-outlined text-[18px]" style={{ color: '#25D366' }}>share</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       <style jsx global>{`
