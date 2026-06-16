@@ -2,6 +2,8 @@
 
 import { generatePublicAccessLink } from '@/actions/generatePublicLink';
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
 interface StudentData {
   name: string;
   studentId: string;

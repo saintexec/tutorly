@@ -11,9 +11,6 @@ interface SessionDetailsModalProps {
 }
 
 export default function SessionDetailsModal({ isOpen, onClose, session, student }: SessionDetailsModalProps) {
-  const [whatsappLink, setWhatsappLink] = useState<string>("");
-  const [loadingLink, setLoadingLink] = useState(false);
-
   const formattedDate = session?.date 
     ? new Date(session.date).toLocaleDateString("en-GB", {
         day: "2-digit",
@@ -22,9 +19,16 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
       })
     : "";
 
-  useEffect(() => {
-    if (isOpen && student && session) {
-      setLoadingLink(true);
+  const handleShareWhatsApp = async () => {
+    if (!student.parent_whatsapp) {
+      alert("No WhatsApp number found for this student's parent.");
+      return;
+    }
+
+    // Open a blank window IMMEDIATELY on click (before any async work)
+    const newWindow = window.open("", "_blank");
+
+    try {
       const studentData = {
         name: student.name,
         studentId: student.id,
@@ -34,16 +38,18 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
         homeworkAssignments: session.homework,
       };
 
-      generateWhatsAppLinkWithPhone(studentData, student.parent_whatsapp || "")
-        .then(({ link }) => {
-          setWhatsappLink(link);
-        })
-        .catch((err) => console.error("Error pre-generating WhatsApp link:", err))
-        .finally(() => setLoadingLink(false));
-    } else {
-      setWhatsappLink("");
+      const { link } = await generateWhatsAppLinkWithPhone(studentData, student.parent_whatsapp || "");
+
+      if (newWindow) {
+        newWindow.location.href = link;
+      }
+    } catch (error) {
+      console.error("Error generating WhatsApp link:", error);
+      if (newWindow) {
+        newWindow.close();
+      }
     }
-  }, [isOpen, student, session, formattedDate]);
+  };
 
   if (!isOpen || !session) return null;
 
@@ -141,32 +147,13 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
 
         {/* Footer */}
         <div className="p-6 bg-white border-t border-[#1E3A5F]/5 flex flex-col sm:flex-row gap-3 md:gap-4 shrink-0">
-          {loadingLink ? (
-            <button
-              disabled
-              className="flex-[2] h-14 bg-[#25D366]/60 text-white rounded-xl font-bold flex items-center justify-center gap-3 cursor-not-allowed"
-            >
-              <span className="w-5 h-5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
-              Preparing Link...
-            </button>
-          ) : (
-            <a
-              href={whatsappLink || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                if (!student.parent_whatsapp) {
-                  e.preventDefault();
-                  alert("No WhatsApp number found for this student's parent.");
-                }
-              }}
-              style={{ textDecoration: 'none' }}
-              className="flex-[2] h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20 text-center"
-            >
-              <span className="material-symbols-outlined fill-white">share</span>
-              SHARE TO WHATSAPP
-            </a>
-          )}
+          <button
+            onClick={handleShareWhatsApp}
+            className="flex-[2] h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20 text-center"
+          >
+            <span className="material-symbols-outlined fill-white">share</span>
+            SHARE TO WHATSAPP
+          </button>
           <button
             onClick={onClose}
             className="flex-1 h-14 border-2 border-[#1E3A5F]/10 text-[#1E3A5F] rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-all"

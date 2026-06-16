@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { generatePublicAccessToken } from '@/utils/publicAccessToken';
-import { BASE_URL } from '@/lib/config';
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
 interface GenerateLinkResponse {
   success: boolean;
