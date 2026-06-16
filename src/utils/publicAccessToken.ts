@@ -17,6 +17,13 @@ export function generatePublicAccessToken(
   tutorId: string,
   expiresInDays: number = 30
 ): string {
+  const secret = process.env.HMAC_SECRET;
+  if (!secret) {
+    console.error('HMAC_SECRET is undefined in environment variables');
+  }
+  
+  const tokenSecret = secret || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
+
   // Create payload
   const now = Date.now();
   const expiresAt = now + expiresInDays * 24 * 60 * 60 * 1000;
@@ -33,9 +40,8 @@ export function generatePublicAccessToken(
   const payloadBase64 = Buffer.from(payloadString).toString('base64');
 
   // Sign with HMAC-SHA256
-  const secret = process.env.JWT_SECRET || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
   const signature = crypto
-    .createHmac('sha256', secret)
+    .createHmac('sha256', tokenSecret)
     .update(payloadBase64)
     .digest('base64');
 
@@ -58,10 +64,16 @@ export function verifyPublicAccessToken(
       return { valid: false, error: 'Invalid token format' };
     }
 
+    const secret = process.env.HMAC_SECRET;
+    if (!secret) {
+      console.error('HMAC_SECRET is undefined in environment variables');
+    }
+    
+    const tokenSecret = secret || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
+
     // Verify signature
-    const secret = process.env.JWT_SECRET || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
     const expectedSignature = crypto
-      .createHmac('sha256', secret)
+      .createHmac('sha256', tokenSecret)
       .update(payloadBase64)
       .digest('base64');
 
@@ -74,14 +86,15 @@ export function verifyPublicAccessToken(
     const payload: TokenPayload = JSON.parse(payloadString);
 
     const nowSeconds = Math.floor(Date.now() / 1000);
+    const expiresAtSeconds = Math.floor(payload.expiresAt / 1000);
     
     console.log('--- TOKEN VERIFICATION DEBUG ---');
     console.log('Current Time (s):', nowSeconds);
-    console.log('Token Expires At (s):', payload.expiresAt);
-    console.log('Is Expired?', nowSeconds > payload.expiresAt);
+    console.log('Token Expires At (s):', expiresAtSeconds);
+    console.log('Is Expired?', nowSeconds > expiresAtSeconds);
 
     // Check expiration (standardized on seconds)
-    if (nowSeconds > payload.expiresAt) {
+    if (nowSeconds > expiresAtSeconds) {
       return { valid: false, error: 'Token has expired' };
     }
 

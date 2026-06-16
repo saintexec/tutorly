@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
+import "@/lib/env"; // Validates environment variables on load
 import "./globals.css";
 
 const manrope = Manrope({

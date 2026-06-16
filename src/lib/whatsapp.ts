@@ -64,7 +64,7 @@ ${publicLink}`;
 
     // Encode message for WhatsApp API
     const encodedMessage = encodeURIComponent(message);
-    const link = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+    const link = `https://wa.me/?text=${encodedMessage}`;
 
     console.log('FINAL WHATSAPP LINK:', link);
     console.log('MESSAGE PREVIEW:', message);
@@ -103,8 +103,11 @@ export function generateWhatsAppLinkWithPhone(
 ): Promise<WhatsAppLinkResult> {
   // Return promise-based version for phone number handling
   return generateWhatsAppLink(studentData).then(({ link, message }) => {
-    const linkWithPhone = phoneNumber
-      ? `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`
+    // Format: https://wa.me/PHONE?text=MESSAGE
+    // Strip non-numeric characters from phone number except leading +
+    const cleanPhone = phoneNumber ? phoneNumber.replace(/[^\d+]/g, '') : '';
+    const linkWithPhone = cleanPhone
+      ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
       : link;
 
     return { link: linkWithPhone, message };
