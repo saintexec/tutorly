@@ -25,13 +25,16 @@ export default function PublicDashboardFooter({ tutorName, tutorWhatsApp }: Prop
       </div>
       
       {tutorWhatsApp && (
-        <button
-          onClick={handleWhatsAppClick}
-          className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 w-full max-w-md mx-auto transition-all active:scale-95 shadow-lg shadow-[#25D366]/20"
+        <a
+          href={`https://wa.me/${tutorWhatsApp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${tutorName}, I have a question about my child's learning progress. 👋`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none' }}
+          className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 w-full max-w-md mx-auto transition-all active:scale-95 shadow-lg shadow-[#25D366]/20 text-center"
         >
           <span className="material-symbols-outlined fill-white">chat</span>
           Message on WhatsApp
-        </button>
+        </a>
       )}
       
       <div className="pt-8 border-t border-gray-50">

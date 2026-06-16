@@ -77,8 +77,6 @@ ${publicLink}`;
 }
 
 /**
- * Opens WhatsApp message in a new tab with proper focus handling
- */
 export function openWhatsAppMessage(link: string): void {
   if (!link) {
     console.error('WhatsApp link is empty');
@@ -86,12 +84,11 @@ export function openWhatsAppMessage(link: string): void {
   }
 
   try {
-    const whatsappWindow = window.open(link, '_blank', 'noopener,noreferrer');
-    if (whatsappWindow) {
-      whatsappWindow.focus();
-    } else {
-      console.warn('WhatsApp window could not be opened. Pop-up blocker may be active.');
-    }
+    const a = document.createElement('a');
+    a.href = link;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.click();
   } catch (error) {
     console.error('Error opening WhatsApp link:', error);
   }
