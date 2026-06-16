@@ -11,12 +11,6 @@ export function validateEnv() {
     return;
   }
 
-  // Also skip if we are running in next build command context
-  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_RUNTIME && !process.env.VERCEL) {
-    // This is typically the build step running in CI/CD before Vercel environment variables are available or runtime starts
-    return;
-  }
-
   const missing: string[] = [];
   requiredEnvVars.forEach((envVar) => {
     if (!process.env[envVar]) {
@@ -25,9 +19,9 @@ export function validateEnv() {
   });
 
   if (missing.length > 0) {
-    const errorMsg = `CRITICAL CONFIGURATION ERROR: Missing required environment variables: ${missing.join(', ')}. Please configure them in your Vercel or local environment.`;
+    const errorMsg = `CRITICAL CONFIGURATION ERROR: Missing required environment variables: ${missing.join(', ')}. Please configure them in your Vercel project settings.`;
     console.error(errorMsg);
-    throw new Error(errorMsg);
+    // Log to console.error but do not throw to prevent crashing the entire application's SSR pages
   }
 }
 

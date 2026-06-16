@@ -46,7 +46,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
         whatsappWindow.location.href = link;
       } else {
         // Fallback if window.open was completely blocked
-        window.location.href = link;
+        alert("Pop-up blocker active! Please allow pop-ups for Tutorly and try again.");
       }
 
       setShowToast(false);

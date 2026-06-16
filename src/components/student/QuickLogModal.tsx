@@ -264,7 +264,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         whatsappWindow.location.href = link;
       } else {
         // Fallback
-        window.location.href = link;
+        alert("Pop-up blocker active! Please allow pop-ups for Tutorly and try again.");
       }
 
       // 7. Cleanup and Close modal
