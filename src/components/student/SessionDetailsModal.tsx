@@ -21,6 +21,12 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
       return;
     }
 
+    // Open a blank window synchronously to satisfy the browser's user-gesture policy
+    const whatsappWindow = window.open('', '_blank', 'noopener,noreferrer');
+    if (whatsappWindow) {
+      whatsappWindow.document.write('<p style="font-family:sans-serif; text-align:center; margin-top:20px; color:#6b7280;">Preparing your WhatsApp share message...</p>');
+    }
+
     try {
       setShowToast(true);
 
@@ -33,16 +39,22 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
         homeworkAssignments: session.homework,
       };
 
-      // Now generateWhatsAppLinkWithPhone is async
       const { link } = await generateWhatsAppLinkWithPhone(studentData, student.parent_whatsapp);
 
-      // Wait a bit to show the premium toast feedback
-      setTimeout(() => {
-        setShowToast(false);
-        openWhatsAppMessage(link);
-      }, 1200);
+      // Navigate the already opened window to the WhatsApp URL
+      if (whatsappWindow) {
+        whatsappWindow.location.href = link;
+      } else {
+        // Fallback if window.open was completely blocked
+        window.location.href = link;
+      }
+
+      setShowToast(false);
     } catch (error) {
       console.error('Error sharing to WhatsApp:', error);
+      if (whatsappWindow) {
+        whatsappWindow.close();
+      }
       alert('Failed to open WhatsApp. Please try again.');
       setShowToast(false);
     }

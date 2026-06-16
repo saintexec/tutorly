@@ -238,10 +238,15 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
       // 4. Validate parent WhatsApp exists
       if (!studentData.parent_whatsapp?.trim()) {
         alert("Parent WhatsApp number is not set. Please update the student profile first.");
-        // We still trigger success/close because the session WAS saved
         onSuccess();
         onClose();
         return;
+      }
+
+      // Open a blank window synchronously to satisfy the browser's user-gesture policy
+      const whatsappWindow = window.open('', '_blank', 'noopener,noreferrer');
+      if (whatsappWindow) {
+        whatsappWindow.document.write('<p style="font-family:sans-serif; text-align:center; margin-top:20px; color:#6b7280;">Preparing your WhatsApp share message...</p>');
       }
 
       // 5. Generate WhatsApp link
@@ -254,9 +259,13 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         homeworkAssignments: formData.homework,
       }, studentData.parent_whatsapp);
 
-      // 6. Show feedback & open WhatsApp
-      alert("Session logged! Opening WhatsApp...");
-      openWhatsAppMessage(link);
+      // 6. Navigate the already opened window to the WhatsApp URL
+      if (whatsappWindow) {
+        whatsappWindow.location.href = link;
+      } else {
+        // Fallback
+        window.location.href = link;
+      }
 
       // 7. Cleanup and Close modal
       onSuccess();
