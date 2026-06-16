@@ -265,7 +265,6 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
       setLoading(false);
     }
   };
-  };
 
   // Modify handleSubmit to return success state
   const handleSubmit = async (e?: React.FormEvent): Promise<boolean> => {
@@ -652,7 +651,8 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
         {/* Sticky Footer */}
         {!shareLink && (

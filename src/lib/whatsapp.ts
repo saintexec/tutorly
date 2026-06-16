@@ -77,6 +77,8 @@ ${publicLink}`;
 }
 
 /**
+ * Opens WhatsApp message in a new tab using dynamic anchor element.
+ */
 export function openWhatsAppMessage(link: string): void {
   if (!link) {
     console.error('WhatsApp link is empty');
