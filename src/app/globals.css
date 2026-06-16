@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ── Google Fonts ─────────────────────────────────────── */
+
+/* ── Stitch Design Tokens ────────────────────────────── */
+@theme inline {
+  /* Primary */
+  --color-primary:             #022448;
+  --color-primary-container:   #1e3a5f;
+  --color-on-primary:          #ffffff;
+  --color-on-primary-container:#8aa4cf;
+  --color-primary-fixed:       #d5e3ff;
+  --color-primary-fixed-dim:   #adc8f5;
+  --color-on-primary-fixed:    #001c3b;
+  --color-on-primary-fixed-variant: #2d486d;
+
+  /* Secondary */
+  --color-secondary:           #006e2f;
+  --color-secondary-container: #6bff8f;
+  --color-on-secondary:        #ffffff;
+  --color-on-secondary-container: #007432;
+  --color-secondary-fixed:     #6bff8f;
+  --color-secondary-fixed-dim: #4ae176;
+
+  /* Tertiary */
+  --color-tertiary:            #341f00;
+  --color-tertiary-container:  #503300;
+  --color-tertiary-fixed:      #ffddb2;
+  --color-tertiary-fixed-dim:  #edbf7f;
+  --color-on-tertiary:         #ffffff;
+  --color-on-tertiary-container: #c69b5f;
+
+  /* Surface */
+  --color-surface:                    #f7f9fb;
+  --color-surface-bright:             #f7f9fb;
+  --color-surface-container-low:      #f2f4f6;
+  --color-surface-container:          #eceef0;
+  --color-surface-container-high:     #e6e8ea;
+  --color-surface-container-highest:  #e0e3e5;
+  --color-surface-container-lowest:   #ffffff;
+  --color-surface-dim:                #d8dadc;
+  --color-surface-tint:               #455f87;
+  --color-surface-variant:            #e0e3e5;
+
+  /* On Surface */
+  --color-on-surface:          #191c1e;
+  --color-on-surface-variant:  #43474e;
+  --color-on-background:       #191c1e;
+  --color-background:          #f7f9fb;
+
+  /* Outlines */
+  --color-outline:             #74777f;
+  --color-outline-variant:     #c4c6cf;
+
+  /* Misc */
+  --color-inverse-primary:     #adc8f5;
+  --color-inverse-surface:     #2d3133;
+  --color-inverse-on-surface:  #eff1f3;
+  --color-error:               #ba1a1a;
+  --color-error-container:     #ffdad6;
+  --color-on-error:            #ffffff;
+  --color-on-error-container:  #93000a;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
+
+  /* Border radius matching ROUND_EIGHT */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+  --radius-xl:  1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+/* ── Base Styles ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  height: 100%;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-on-surface);
+  line-height: 1.25;
+}
+
+/* ── Signature Gradient ──────────────────────────────── */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-container), var(--color-primary));
+}
+
+.gradient-primary-text {
+  background: linear-gradient(135deg, var(--color-primary-container), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glassmorphism ───────────────────────────────────── */
+.glass {
+  background: rgba(247, 249, 251, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-dark {
+  background: rgba(2, 36, 72, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Ambient Shadow (tinted, no pure black) ──────────── */
+.shadow-ambient {
+  box-shadow: 0 8px 32px -4px rgba(2, 36, 72, 0.08), 0 2px 8px -2px rgba(2, 36, 72, 0.04);
+}
+
+.shadow-ambient-sm {
+  box-shadow: 0 2px 12px -2px rgba(2, 36, 72, 0.06);
+}
+
+.shadow-ambient-lg {
+  box-shadow: 0 16px 48px -8px rgba(2, 36, 72, 0.12), 0 4px 16px -4px rgba(2, 36, 72, 0.06);
+}
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--color-outline-variant); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-outline); }
+
+/* ── Floating Animations ────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* ── Dashboard Page Hover Utilities ─────────────────── */
+
+/* "View Schedule" outline button */
+.btn-schedule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: white;
+  border: 1.5px solid #1a3a52;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a3a52;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+.btn-schedule:hover {
+  background: #1a3a52;
+  color: #ffffff;
+}
+
+/* Session list row hover */
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.session-row:hover {
+  background: #f8fafc;
+}
+
+/* Row kebab menu button */
+.btn-kebab {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-kebab:hover {
+  background: #f3f4f6;
+  color: #1a3a52;
+}
+
+/* Empty-state "Log a Past Session" CTA */
+.btn-log-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: #1a3a52;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: var(--font-sans);
+}
+.btn-log-cta:hover {
+  background: #243f5c;
+}
+
+/* Tip card "Share via WhatsApp" button */
+.btn-whatsapp {
+  background: #d4af37;
+  color: #1a3a52;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+  font-family: var(--font-sans);
+}
+.btn-whatsapp:hover {
+  background: #c9a42e;
+  box-shadow: 0 6px 16px rgba(212,175,55,0.45);
+}
+
+/* FAB — Log Session */
+.fab-log-session {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-family: var(--font-sans);
+}
+.fab-log-session:hover {
+  background: #16a34a;
+  transform: scale(1.04);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5);
+}
+

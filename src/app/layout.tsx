@@ -1,0 +1,35 @@
+import type { Metadata } from "next";
+import { Manrope, Inter } from "next/font/google";
+import "./globals.css";
+
+const manrope = Manrope({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "Tutorly — The Academic Atelier",
+  description:
+    "The premium workspace for independent tutors. Organise students, sessions, and payments with calm and clarity.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${manrope.variable} ${inter.variable} h-full`}>
+      <body className="h-full antialiased">{children}</body>
+    </html>
+  );
+}
