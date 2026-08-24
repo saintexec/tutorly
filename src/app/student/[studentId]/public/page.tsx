@@ -46,12 +46,11 @@ interface DashboardData {
   performanceData: Array<{ week: string; rating: number }>;
 }
 
-export default async function PublicStudentPage({
-  params,
-  searchParams,
-}: PageProps) {
-  const { studentId } = await params;
-  const { token } = await searchParams;
+export default async function PublicStudentPage(props: PageProps) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const studentId = params.studentId;
+  const token = searchParams.token;
 
   console.log('=== PUBLIC DASHBOARD DEBUG ===');
   console.log('studentId from params:', studentId);

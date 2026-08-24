@@ -6,8 +6,9 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function StudentProfilePage({ params }: PageProps) {
-  const { id: studentId } = await params;
+export default async function StudentProfilePage(props: PageProps) {
+  const params = await props.params;
+  const studentId = params.id;
   const supabase = await createClient();
 
   // 1. Fetch student detail

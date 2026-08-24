@@ -20,8 +20,10 @@ export function validateEnv() {
 
   if (missing.length > 0) {
     const errorMsg = `CRITICAL CONFIGURATION ERROR: Missing required environment variables: ${missing.join(', ')}. Please configure them in your Vercel project settings.`;
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(errorMsg);
+    }
     console.error(errorMsg);
-    // Log to console.error but do not throw to prevent crashing the entire application's SSR pages
   }
 }
 

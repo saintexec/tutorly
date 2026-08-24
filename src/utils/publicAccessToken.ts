@@ -19,10 +19,13 @@ export function generatePublicAccessToken(
 ): string {
   const secret = process.env.HMAC_SECRET;
   if (!secret) {
-    console.error('HMAC_SECRET is undefined in environment variables');
+    throw new Error('CRITICAL CONFIGURATION ERROR: HMAC_SECRET environment variable is missing.');
   }
-  
-  const tokenSecret = secret || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
+  const tokenSecret = secret;
+
+  console.log('--- HMAC_SECRET Generation Debug ---');
+  console.log('HMAC_SECRET in generate (first 4 chars):', tokenSecret.substring(0, 4));
+  console.log('Is using fallback secret?', tokenSecret === 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898');
 
   // Create payload
   const now = Date.now();
@@ -66,10 +69,9 @@ export function verifyPublicAccessToken(
 
     const secret = process.env.HMAC_SECRET;
     if (!secret) {
-      console.error('HMAC_SECRET is undefined in environment variables');
+      throw new Error('CRITICAL CONFIGURATION ERROR: HMAC_SECRET environment variable is missing.');
     }
-    
-    const tokenSecret = secret || 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898';
+    const tokenSecret = secret;
 
     // Verify signature
     const expectedSignature = crypto
@@ -77,6 +79,10 @@ export function verifyPublicAccessToken(
       .update(payloadBase64)
       .digest('base64');
 
+    console.log('--- HMAC_SECRET Verification Debug ---');
+    console.log('HMAC_SECRET in verify (first 4 chars):', tokenSecret.substring(0, 4));
+    console.log('Is using fallback secret?', tokenSecret === 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898');
+    
     if (signature !== expectedSignature) {
       return { valid: false, error: 'Token signature is invalid' };
     }

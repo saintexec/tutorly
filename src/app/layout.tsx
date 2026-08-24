@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "@/lib/env"; // Validates environment variables on load
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const manrope = Manrope({
   variable: "--font-display",
@@ -30,7 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable} h-full`}>
-      <body className="h-full antialiased">{children}</body>
+      <body className="h-full antialiased">
+        {children}
+        <Toaster position="top-center" reverseOrder={false} />
+      </body>
     </html>
   );
 }

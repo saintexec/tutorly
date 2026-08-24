@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { generateWhatsAppLinkWithPhone } from "@/lib/whatsapp";
+import toast from "react-hot-toast";
 
 interface SessionDetailsModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
 
   const handleShareWhatsApp = async () => {
     if (!student.parent_whatsapp) {
-      alert("No WhatsApp number found for this student's parent.");
+      toast.error("No WhatsApp number found for this student's parent. Please add one in the student profile.");
       return;
     }
 

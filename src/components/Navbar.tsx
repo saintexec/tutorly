@@ -47,15 +47,18 @@ export default function Navbar() {
       <aside
         style={{
           width: "260px",
-          minHeight: "100vh",
-          position: "sticky",
+          height: "100vh",
+          position: "fixed",
           top: 0,
+          left: 0,
           background: "#1a3a52",
           display: "flex",
           flexDirection: "column",
           padding: "24px 16px",
           borderRight: "1px solid rgba(255,255,255,0.08)",
           flexShrink: 0,
+          zIndex: 50,
+          overflowY: "auto",
         }}
         className="hidden lg:flex"
       >

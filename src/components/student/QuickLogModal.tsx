@@ -124,6 +124,13 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
           focusAreas: formData.focusAreas,
         }),
       });
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        throw new Error(text || "Received non-JSON response from AI API");
+      }
+
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || "Failed to generate homework");

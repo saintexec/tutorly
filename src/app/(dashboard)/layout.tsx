@@ -31,7 +31,7 @@ export default async function DashboardLayout({
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#f5f6fa" }}>
       <Navbar />
-      <main style={{ flex: 1, paddingBottom: "0", position: "relative", minWidth: 0 }} className="lg:pb-0 pb-20">
+      <main style={{ flex: 1, paddingBottom: "0", position: "relative", minWidth: 0 }} className="lg:pl-[260px] lg:pb-0 pb-20">
         {/* Top bar */}
         <header style={{
           position: "sticky",
