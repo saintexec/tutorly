@@ -169,8 +169,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── 4 Stat Cards ──────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
+      {/* ── 3 Stat Cards ──────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "32px" }}>
 
         {/* Total Students */}
         <div style={{
@@ -318,258 +318,108 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Lessons Generated */}
+      </div>
+
+      {/* ── Today's Session List (Full Width) ─────────────── */}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "#1a3a52", margin: 0 }}>Today&apos;s Session List</h2>
+          <Link href="/sessions" style={{ fontSize: "12px", fontWeight: 700, color: "#1a3a52", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            View All
+          </Link>
+        </div>
+
         <div style={{
           background: "white",
           borderRadius: "16px",
-          padding: "24px",
-          borderLeft: "4px solid #8b5cf6",
+          padding: "8px",
           boxShadow: "0 4px 20px -4px rgba(2,36,72,0.08)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          minHeight: "140px",
         }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "12px",
-              background: "rgba(139,92,246,0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#8b5cf6" }}>auto_awesome</span>
-            </div>
-            <span style={{
-              fontSize: "11px",
-              fontWeight: 600,
-              color: "#7c3aed",
-              background: "rgba(139,92,246,0.1)",
-              padding: "3px 10px",
-              borderRadius: "999px",
-            }}>
-              AI Assisted
-            </span>
-          </div>
-          <div>
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#6b7280", margin: "0 0 4px" }}>Lessons Generated</p>
-            <p style={{ fontSize: "2.5rem", fontWeight: 700, color: "#1a3a52", margin: 0, lineHeight: 1 }}>0</p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Two Column Layout ─────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "32px" }}>
-
-        {/* Left Col: Today's Sessions */}
-        <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-            <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "#1a3a52", margin: 0 }}>Today&apos;s Session List</h2>
-            <Link href="/sessions" style={{ fontSize: "12px", fontWeight: 700, color: "#1a3a52", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              View All
-            </Link>
-          </div>
-
-          <div style={{
-            background: "white",
-            borderRadius: "16px",
-            padding: "8px",
-            boxShadow: "0 4px 20px -4px rgba(2,36,72,0.08)",
-          }}>
-            {todaysSessions.length === 0 ? (
-              <div style={{ padding: "48px 24px", textAlign: "center" }}>
-                <div style={{
-                  width: "64px",
-                  height: "64px",
-                  borderRadius: "16px",
-                  background: "rgba(26,58,82,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 16px",
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: "32px", color: "#6b7280" }}>calendar_add_on</span>
-                </div>
-                <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>No sessions today</h3>
-                <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 20px", lineHeight: 1.6, maxWidth: "280px", marginLeft: "auto", marginRight: "auto" }}>
-                  Your schedule is clear — a good time to follow up with students or generate lesson plans.
-                </p>
-                <button className="btn-log-cta">
-                  <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>add_circle</span>
-                  Log a Past Session
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                {todaysSessions.map((session, i) => {
-                  const student = session.students || {};
-                  const isCompleted = session.status === "completed" || session.performance != null;
-                  const isUnpaid = session.payment_status === "unpaid" || (!session.paid && isCompleted);
-                  const avatarColor = ["#1a3a52", "#d4af37", "#22c55e", "#8b5cf6", "#ef4444"][i % 5];
-
-                  return (
-                    <div key={session.id || i} className="session-row">
-                      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                        <div style={{
-                          width: "44px",
-                          height: "44px",
-                          borderRadius: "50%",
-                          background: avatarColor,
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 700,
-                          fontSize: "15px",
-                          flexShrink: 0,
-                        }}>
-                          {student.name ? student.name.substring(0, 2).toUpperCase() : "?"}
-                        </div>
-                        <div>
-                          <p style={{ fontWeight: 600, color: "#1a3a52", margin: 0, fontSize: "14px" }}>{student.name || "Unknown Student"}</p>
-                          <p style={{ fontSize: "12px", color: "#6b7280", margin: "2px 0 0", display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span>{student.subject || session.topic || "Subject"}</span>
-                            <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#d1d5db", display: "inline-block" }} />
-                            <span>{session.date ? formatTime(session.date) : "N/A"}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{
-                          padding: "4px 12px",
-                          borderRadius: "999px",
-                          fontSize: "11px",
-                          fontWeight: 600,
-                          ...(isUnpaid
-                            ? { background: "rgba(239,68,68,0.1)", color: "#dc2626" }
-                            : isCompleted
-                            ? { background: "rgba(34,197,94,0.1)", color: "#16a34a" }
-                            : { background: "rgba(26,58,82,0.08)", color: "#1a3a52" }),
-                        }}>
-                          {isUnpaid ? "Unpaid" : isCompleted ? "Completed" : "Scheduled"}
-                        </span>
-                        <button className="btn-kebab">
-                          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>more_vert</span>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Col */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-
-          {/* Tip Card */}
-          <div style={{
-            background: "linear-gradient(135deg, #1a3a52 0%, #2d5478 100%)",
-            borderRadius: "16px",
-            padding: "24px",
-            color: "white",
-            position: "relative",
-            overflow: "hidden",
-          }}>
-            <div style={{
-              position: "absolute",
-              top: "-20px",
-              right: "-20px",
-              width: "100px",
-              height: "100px",
-              background: "rgba(212,175,55,0.15)",
-              borderRadius: "50%",
-            }} />
-            <div style={{ position: "relative", zIndex: 1 }}>
+          {todaysSessions.length === 0 ? (
+            <div style={{ padding: "48px 24px", textAlign: "center" }}>
               <div style={{
-                width: "36px",
-                height: "36px",
-                background: "rgba(212,175,55,0.2)",
-                borderRadius: "10px",
+                width: "64px",
+                height: "64px",
+                borderRadius: "16px",
+                background: "rgba(26,58,82,0.06)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: "12px",
+                margin: "0 auto 16px",
               }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#d4af37" }}>tips_and_updates</span>
+                <span className="material-symbols-outlined" style={{ fontSize: "32px", color: "#6b7280" }}>calendar_add_on</span>
               </div>
-              <h3 style={{ fontWeight: 700, fontSize: "15px", margin: "0 0 8px", color: "white" }}>Engage Your Students</h3>
-              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, margin: "0 0 16px" }}>
-                Share student progress pages via WhatsApp to boost engagement and keep parents in the loop.
+              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>No sessions today</h3>
+              <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 20px", lineHeight: 1.6, maxWidth: "280px", marginLeft: "auto", marginRight: "auto" }}>
+                Your schedule is clear — a good time to follow up with students or generate lesson plans.
               </p>
-              <button className="btn-whatsapp">
-                Share via WhatsApp
-                <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>open_in_new</span>
+              <button className="btn-log-cta">
+                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>add_circle</span>
+                Log a Past Session
               </button>
             </div>
-          </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              {todaysSessions.map((session, i) => {
+                const student = session.students || {};
+                const isCompleted = session.status === "completed" || session.performance != null;
+                const isUnpaid = session.payment_status === "unpaid" || (!session.paid && isCompleted);
+                const avatarColor = ["#1a3a52", "#d4af37", "#22c55e", "#8b5cf6", "#ef4444"][i % 5];
 
-          {/* Recent Activity */}
-          <div style={{
-            background: "white",
-            border: "1px solid #e5e7eb",
-            borderRadius: "12px",
-            padding: "16px",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#1a3a52", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "18px", color: "#6b7280" }}>history</span>
-                Recent Activity
-              </h3>
-              <Link href="/sessions" style={{ fontSize: "12px", fontWeight: 600, color: "#1a3a52", textDecoration: "none" }}>
-                View All
-              </Link>
-            </div>
-
-            {recentActivity.length === 0 ? (
-              <p style={{ fontSize: "12px", color: "#9ca3af", fontStyle: "italic", margin: 0 }}>No recent activity.</p>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {recentActivity.map((act, i) => {
-                  const student = act.students || {};
-                  const isCompleted = act.status === "completed";
-                  const isUnpaid = act.payment_status === "unpaid";
-                  const dotColor = isUnpaid ? "#ef4444" : isCompleted ? "#22c55e" : "#6b7280";
-
-                  return (
-                    <div key={act.id || i} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                return (
+                  <div key={session.id || i} className="session-row">
+                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                       <div style={{
-                        width: "8px",
-                        height: "8px",
+                        width: "44px",
+                        height: "44px",
                         borderRadius: "50%",
-                        background: dotColor,
-                        marginTop: "5px",
+                        background: avatarColor,
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: 700,
+                        fontSize: "15px",
                         flexShrink: 0,
-                      }} />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: "13px", fontWeight: 600, color: "#374151", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {student.name || "Student"}
-                        </p>
-                        <p style={{ fontSize: "11px", color: "#6b7280", margin: "1px 0 0" }}>
-                          {act.topic || student.subject || "Session"}
+                      }}>
+                        {student.name ? student.name.substring(0, 2).toUpperCase() : "?"}
+                      </div>
+                      <div>
+                        <p style={{ fontWeight: 600, color: "#1a3a52", margin: 0, fontSize: "14px" }}>{student.name || "Unknown Student"}</p>
+                        <p style={{ fontSize: "12px", color: "#6b7280", margin: "2px 0 0", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span>{student.subject || session.topic || "Subject"}</span>
+                          <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: "#d1d5db", display: "inline-block" }} />
+                          <span>{session.date ? formatTime(session.date) : "N/A"}</span>
                         </p>
                       </div>
-                      <span style={{ fontSize: "11px", color: "#9ca3af", flexShrink: 0 }}>
-                        {act.created_at ? getRelativeTime(act.created_at) : ""}
-                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{
+                        padding: "4px 12px",
+                        borderRadius: "999px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        ...(isUnpaid
+                          ? { background: "rgba(239,68,68,0.1)", color: "#dc2626" }
+                          : isCompleted
+                          ? { background: "rgba(34,197,94,0.1)", color: "#16a34a" }
+                          : { background: "rgba(26,58,82,0.08)", color: "#1a3a52" }),
+                      }}>
+                        {isUnpaid ? "Unpaid" : isCompleted ? "Completed" : "Scheduled"}
+                      </span>
+                      <button className="btn-kebab">
+                        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>more_vert</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── Floating Action Button ─────────────────────────── */}
-      <button className="fab-log-session">
-        <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>add_circle</span>
-        Log Session
-      </button>
+      {/* ── Floating Action Button removed for cleaner UI ─────────────────────────── */}
 
     </div>
   );
