@@ -31,6 +31,9 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
   const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+    const [showAllSessions, setShowAllSessions] = useState(false);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -241,60 +244,60 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
-        <div className="space-y-6">
-          {/* Growth Journey */}
-          <div className="bg-[#fff8f1] rounded-[var(--radius-2xl)] p-8 border border-[#ffddb2] relative overflow-hidden shadow-sm">
-            <div className="flex items-start justify-between relative z-10">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[#503300] font-800 tracking-tight">
-                   <span className="material-symbols-outlined text-[20px]">trending_up</span>
-                   Growth Journey
-                </div>
-                <p className="text-sm text-[#c69b5f] leading-relaxed max-w-[340px]">
-                  {sessions.length > 0 
-                    ? `You've completed ${sessions.length} sessions with ${fullName}! Keep up the great work.` 
-                    : "No sessions recorded yet. Start your first lesson to see progress."}
-                </p>
+      {/* Top Section with Financial Summary and Total Sessions */}
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6">
+        {/* Financial Summary - Prominent Top Position */}
+        <div className="bg-gradient-to-br from-white to-surface-container-low rounded-[var(--radius-2xl)] p-8 shadow-ambient border-2 border-primary/20 space-y-6">
+           <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                 <h2 className="text-xl font-800 tracking-tight text-on-surface flex items-center gap-2">
+                   <span className="material-symbols-outlined text-primary text-[24px]">payments</span>
+                   Financial Summary
+                 </h2>
+                 <p className="text-[10px] font-800 text-on-surface-variant uppercase tracking-widest">Macro Overview</p>
               </div>
-              
-              <div className="flex items-center gap-3 bg-white/80 backdrop-blur rounded-2xl p-2 px-4 shadow-sm border border-[#ffddb2]">
-                 <div className="flex -space-x-1">
-                    {[1,2,3].map(i => (
-                       <div key={i} className="w-6 h-6 rounded-full bg-[#6bff8f] flex items-center justify-center text-[#005321] text-[12px] border-2 border-white shadow-sm">
-                          <span className="material-symbols-outlined text-[14px]">check</span>
-                       </div>
-                    ))}
-                 </div>
-                 <div className="flex flex-col">
-                    <span className="text-[14px] font-800 text-[#341f00] leading-none">{streak} SESSIONS</span>
-                    <span className="text-[10px] font-700 text-[#503300] tracking-widest uppercase opacity-70">TOTAL</span>
-                 </div>
+              <button 
+                onClick={handleShowInvoices}
+                className="px-4 py-2 rounded-[var(--radius-lg)] bg-primary-container/10 text-primary-container font-700 text-xs hover:bg-primary-container/20 transition-colors"
+              >
+                 View Invoices
+              </button>
+           </div>
+           
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+               <div className="bg-white/80 p-4 rounded-xl border border-outline-variant/20 flex flex-col justify-between">
+                  <span className="text-xs font-600 text-on-surface-variant">Outstanding Balance</span>
+                  <span className="text-xl font-800 text-[#BA1A1A] mt-2">RM {outstandingBalance.toFixed(2)}</span>
+               </div>
+               <div className="bg-white/80 p-4 rounded-xl border border-outline-variant/20 flex flex-col justify-between">
+                  <span className="text-xs font-600 text-on-surface-variant">Total Revenue</span>
+                  <span className="text-xl font-800 text-[#22C55E] mt-2">RM {totalRevenue.toFixed(2)}</span>
+               </div>
+               <div className="bg-white/80 p-4 rounded-xl border border-outline-variant/20 flex flex-col justify-between opacity-80">
+                  <span className="text-xs font-600 text-on-surface-variant">Next Invoice Date</span>
+                  <span className="text-xl font-800 text-on-surface mt-2">TBD</span>
+               </div>
+            </div>
+        </div>
+
+        {/* Total Sessions Box */}
+        <div className="bg-[#fff8f1] rounded-[var(--radius-2xl)] p-8 border border-[#ffddb2] shadow-sm flex flex-col justify-between">
+           <div className="space-y-1">
+              <span className="text-[10px] font-800 uppercase tracking-widest text-[#c69b5f]">Total Sessions</span>
+              <div className="text-3xl font-800 text-[#341f00] mt-1">{streak}</div>
+              <div className="text-xs font-700 text-[#503300]">Sessions Completed</div>
+           </div>
+           <div className="flex items-center justify-between pt-4 border-t border-[#ffddb2]/60 mt-4">
+              <span className="text-xs font-600 text-[#c69b5f]">Consistency</span>
+              <div className="w-8 h-8 rounded-full bg-[#6bff8f]/20 flex items-center justify-center text-[#005321]">
+                 <span className="material-symbols-outlined text-[16px]">task_alt</span>
               </div>
-            </div>
+           </div>
+        </div>
+      </div>
 
-            <div className="mt-12 flex justify-between items-end h-24 px-4 relative">
-               <div className="absolute inset-x-0 bottom-4 h-1 bg-[#edbf7f]/20 rounded-full" />
-               {sessions.length > 0 ? (
-                 sessions.slice(0, 4).reverse().map((s, i) => (
-                    <div key={s.id} className="flex flex-col items-center gap-2 relative">
-                       <div className={`w-3 h-3 rounded-full border-2 border-white shadow-sm bg-[#edbf7f]`} />
-                       <div className={`h-10 w-0.5 bg-[#edbf7f] opacity-30`} />
-                       <span className="text-[10px] font-700 text-[#c69b5f] uppercase tracking-wider">
-                         {new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                       </span>
-                    </div>
-                 ))
-               ) : (
-                 <div className="absolute inset-x-0 bottom-4 flex justify-between px-4">
-                    {[1,2,3,4].map(i => (
-                       <div key={i} className="w-3 h-3 rounded-full bg-outline-variant/20 border-2 border-white shadow-sm" />
-                    ))}
-                 </div>
-               )}
-            </div>
-          </div>
-
+      {/* Main Content Full Width */}
+      <div className="space-y-6">
           {/* Academic Performance */}
           <div className="bg-white rounded-[var(--radius-2xl)] p-8 shadow-ambient border border-outline-variant/10">
             <div className="flex items-center justify-between mb-8">
@@ -338,7 +341,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                      {sessions.length === 0 ? (
                         <tr><td colSpan={5} className="py-8 text-center text-on-surface-variant italic font-600">No sessions yet</td></tr>
                      ) : (
-                        sessions.map(s => (
+                        (mounted && showAllSessions ? sessions : sessions.slice(0, 5)).map(s => (
                            <tr 
                              key={s.id} 
                              onClick={() => handleOpenSessionDetails(s)}
@@ -398,91 +401,17 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                   </tbody>
                </table>
             </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* Private Notes */}
-          <div className="bg-[#fff8f1] rounded-[var(--radius-2xl)] p-8 border border-[#ffddb2] shadow-sm flex flex-col gap-4">
-             <div className="flex items-center justify-between">
-               <div className="flex items-center gap-2 text-[#341f00] font-800 tracking-tight">
-                  <span className="material-symbols-outlined text-[20px]">notes</span>
-                  Private Notes
-               </div>
-               {isEditingNotes ? (
-                 <button 
-                   onClick={handleSaveNotes}
-                   disabled={isSavingNotes}
-                   className="text-[10px] font-800 text-primary-container hover:underline disabled:opacity-50"
+           {sessions.length > 5 && (
+              <div className="mt-6 text-center">
+                 <button
+                   onClick={() => setShowAllSessions(!showAllSessions)}
+                   className="px-6 py-2 rounded-xl bg-surface-container-low text-on-surface font-700 text-xs hover:bg-surface-container transition-colors"
                  >
-                   {isSavingNotes ? "SAVING..." : "SAVE"}
+                   {showAllSessions ? "Show Less" : `Show All Sessions (${sessions.length - 5} more)`}
                  </button>
-               ) : (
-                 <button 
-                   onClick={() => setIsEditingNotes(true)}
-                   className="text-[10px] font-800 text-[#c69b5f] hover:underline"
-                 >
-                   EDIT
-                 </button>
-               )}
-             </div>
-             
-             {isEditingNotes ? (
-               <textarea 
-                 value={notes}
-                 onChange={(e) => setNotes(e.target.value)}
-                 autoFocus
-                 placeholder={`Add private notes about ${student.name.split(' ')[0]}'s progress...`}
-                 className="w-full bg-transparent border-none focus:ring-0 text-sm italic text-[#c69b5f] leading-relaxed resize-none min-h-[120px] outline-none"
-               />
-             ) : (
-               <div 
-                 onClick={() => setIsEditingNotes(true)}
-                 className="w-full text-sm italic text-[#c69b5f] leading-relaxed min-h-[120px] cursor-pointer"
-               >
-                 {notes || `Add private notes about ${student.name.split(' ')[0]}'s progress...`}
-               </div>
-             )}
-
-             {lastSaved && !isEditingNotes && (
-               <span className="text-[10px] font-800 uppercase tracking-widest text-[#edbf7f]">
-                  • Last saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-               </span>
-             )}
-          </div>
-
-          {/* Financial Summary */}
-          <div className="bg-white rounded-[var(--radius-2xl)] p-8 shadow-ambient border border-outline-variant/10 space-y-8">
-             <div className="space-y-1">
-                <h2 className="text-xl font-800 tracking-tight text-on-surface">Financial Summary</h2>
-                <p className="text-[10px] font-800 text-on-surface-variant uppercase tracking-widest">Macro Overview</p>
-             </div>
-             
-              <div className="space-y-4">
-                 <div className="flex items-center justify-between">
-                    <span className="text-sm font-600 text-on-surface-variant">Outstanding Balance</span>
-                    <span className="text-sm font-800 text-[#BA1A1A]">RM {outstandingBalance.toFixed(2)}</span>
-                 </div>
-                 <div className="flex items-center justify-between">
-                    <span className="text-sm font-600 text-on-surface-variant">Total Revenue</span>
-                    <span className="text-sm font-800 text-[#22C55E]">RM {totalRevenue.toFixed(2)}</span>
-                 </div>
-                 <div className="flex items-center justify-between opacity-50">
-                    <span className="text-sm font-600 text-on-surface-variant">Next Invoice Date</span>
-                    <span className="text-sm font-800 text-on-surface">TBD</span>
-                 </div>
               </div>
-
-             <div className="flex flex-col gap-2">
-               <button 
-                 onClick={handleShowInvoices}
-                 className="w-full py-2.5 rounded-[var(--radius-lg)] bg-surface-container-low text-on-surface font-700 text-sm hover:bg-surface-container transition-colors"
-               >
-                  View Invoices
-               </button>
-             </div>
+           )}
           </div>
-        </div>
       </div>
 
       <EditStudentModal 

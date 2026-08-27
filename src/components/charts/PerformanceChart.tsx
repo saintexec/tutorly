@@ -22,20 +22,29 @@ interface PerformanceChartProps {
 }
 
 export default function PerformanceChart({ data }: PerformanceChartProps) {
+  // Take only the last 10 sessions for a cleaner chart
+  const recentData = data.slice(-10);
+
   return (
-    <div className="h-[220px] w-full">
+    <div className="h-[280px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eceef0" />
+        <LineChart data={recentData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f2f5" />
           <XAxis
             dataKey="label"
             axisLine={false}
             tickLine={false}
-            tick={{ fontSize: 10, fill: "#74777f", fontWeight: 700 }}
-            dy={10}
-            padding={{ left: 10, right: 10 }}
+            tick={{ fontSize: 11, fill: "#74777f", fontWeight: 700 }}
+            dy={8}
+            padding={{ left: 15, right: 15 }}
           />
-          <YAxis hide domain={[0, 5]} />
+          <YAxis 
+            domain={[0, 5]} 
+            ticks={[1, 2, 3, 4, 5]}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 10, fill: "#74777f", fontWeight: 600 }}
+          />
           <Tooltip
             labelStyle={{ fontWeight: 800, color: "#1e3a5f", marginBottom: "4px" }}
             contentStyle={{
@@ -63,10 +72,10 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
           <Line
             type="monotone"
             dataKey="rating"
-            stroke="#1e3a5f"
+            stroke="#2563eb"
             strokeWidth={3}
-            dot={{ r: 4, fill: "#1e3a5f", strokeWidth: 2, stroke: "#fff" }}
-            activeDot={{ r: 6, fill: "#3b82f6", strokeWidth: 0 }}
+            dot={{ r: 5, fill: "#2563eb", strokeWidth: 2, stroke: "#fff" }}
+            activeDot={{ r: 7, fill: "#1d4ed8", strokeWidth: 0 }}
             animationDuration={1000}
           />
         </LineChart>

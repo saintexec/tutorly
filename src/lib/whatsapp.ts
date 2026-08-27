@@ -69,7 +69,7 @@ ${publicLink}`;
     const link = `https://wa.me/?text=${encodedMessage}`;
 
     console.log('FINAL WHATSAPP LINK:', link);
-    window.location.href = link;
+    // window.location.href = link; removed to prevent tab hijacking
     console.log('MESSAGE PREVIEW:', message);
 
     return { link, message };
