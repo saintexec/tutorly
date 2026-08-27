@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import StudentCard from "@/components/student/StudentCard";
 import AddStudentModal from "@/components/student/AddStudentModal";
+import { UserPlus, Users } from "lucide-react";
 
 export default function StudentsPage() {
   const supabase = createClient();
@@ -52,7 +53,7 @@ export default function StudentsPage() {
           onClick={() => setIsModalOpen(true)}
           className="flex items-center gap-2 px-6 py-2.5 bg-primary-container text-white rounded-[var(--radius-lg)] text-sm font-700 shadow-ambient hover:bg-primary transition-all active:scale-95"
         >
-          <span className="material-symbols-outlined text-[20px]">person_add</span>
+          <UserPlus size={20} />
           Add Student
         </button>
       </div>
@@ -66,7 +67,7 @@ export default function StudentsPage() {
       ) : students.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-surface-container-lowest rounded-3xl border-2 border-dashed border-outline-variant/30 space-y-6">
           <div className="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant/40">
-            <span className="material-symbols-outlined text-[48px]">group</span>
+            <Users size={48} />
           </div>
           <div className="text-center space-y-2">
             <h2 className="text-xl font-800 text-on-surface tracking-tight">No students yet</h2>
@@ -78,7 +79,7 @@ export default function StudentsPage() {
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-2 px-8 py-3 bg-primary-container text-white rounded-full text-sm font-800 shadow-ambient hover:bg-primary transition-all"
           >
-            <span className="material-symbols-outlined text-[20px]">person_add</span>
+            <UserPlus size={20} />
             Add Your First Student
           </button>
         </div>

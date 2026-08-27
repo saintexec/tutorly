@@ -11,6 +11,7 @@ import SessionDetailsModal from "./SessionDetailsModal";
 import Link from "next/link";
 
 import StudentAvatar from "./StudentAvatar";
+import { ArrowLeft, BookOpen, PlayCircle, CreditCard, CheckCircle2, Star, Eye, Trash2 } from "lucide-react";
 
 interface StudentProfileClientProps {
   initialStudent: any;
@@ -194,7 +195,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
           href="/students" 
           className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-600 text-sm"
         >
-          <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <ArrowLeft size={20} />
           Back to Students
         </Link>
       </div>
@@ -215,7 +216,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
               </span>
             </div>
             <p className="flex items-center gap-2 text-on-surface-variant text-sm font-600">
-              <span className="material-symbols-outlined text-[18px]">menu_book</span>
+              <BookOpen size={18} />
               {student.subject} • {student.level}
             </p>
           </div>
@@ -238,7 +239,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
             onClick={() => setIsQuickLogOpen(true)}
             className="flex items-center gap-2 px-6 py-2.5 rounded-[var(--radius-lg)] bg-primary-container text-white text-sm font-700 hover:bg-primary transition-all shadow-ambient active:scale-95"
           >
-            <span className="material-symbols-outlined text-[20px]">play_circle</span>
+            <PlayCircle size={20} />
             Start Lesson
           </button>
         </div>
@@ -250,10 +251,10 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
         <div className="bg-gradient-to-br from-white to-surface-container-low rounded-[var(--radius-2xl)] p-8 shadow-ambient border-2 border-primary/20 space-y-6">
            <div className="flex items-center justify-between">
               <div className="space-y-1">
-                 <h2 className="text-xl font-800 tracking-tight text-on-surface flex items-center gap-2">
-                   <span className="material-symbols-outlined text-primary text-[24px]">payments</span>
-                   Financial Summary
-                 </h2>
+                   <h2 className="text-xl font-800 tracking-tight text-on-surface flex items-center gap-2">
+                     <CreditCard className="text-primary" size={24} />
+                     Financial Summary
+                   </h2>
                  <p className="text-[10px] font-800 text-on-surface-variant uppercase tracking-widest">Macro Overview</p>
               </div>
               <button 
@@ -290,7 +291,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
            <div className="flex items-center justify-between pt-4 border-t border-[#ffddb2]/60 mt-4">
               <span className="text-xs font-600 text-[#c69b5f]">Consistency</span>
               <div className="w-8 h-8 rounded-full bg-[#6bff8f]/20 flex items-center justify-center text-[#005321]">
-                 <span className="material-symbols-outlined text-[16px]">task_alt</span>
+                 <CheckCircle2 size={16} />
               </div>
            </div>
         </div>
@@ -309,7 +310,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                   <span className="text-lg font-800 text-on-surface">{averageRating}</span>
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map(i => (
-                       <span key={i} className={`material-symbols-outlined text-[20px] ${i <= Math.round(Number(averageRating)) ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"}`}>star</span>
+                       <Star key={i} size={20} className={i <= Math.round(Number(averageRating)) ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"} />
                     ))}
                   </div>
                </div>
@@ -356,7 +357,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                               <td className="py-5 text-center">
                                  <div className="flex justify-center gap-0.5">
                                     {[1,2,3,4,5].map(i => (
-                                       <span key={i} className={`material-symbols-outlined text-[16px] ${i <= (s.performance ?? 0) ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"}`}>star</span>
+                                       <Star key={i} size={16} className={i <= (s.performance ?? 0) ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"} />
                                     ))}
                                  </div>
                               </td>
@@ -383,7 +384,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                                   }}
                                   className="text-primary-container hover:text-primary transition-colors p-1"
                                 >
-                                  <span className="material-symbols-outlined text-[18px]">visibility</span>
+                                  <Eye size={18} />
                                 </button>
                                 <button 
                                   onClick={(e) => {
@@ -392,7 +393,7 @@ export default function StudentProfileClient({ initialStudent, initialSessions }
                                   }}
                                   className="text-on-error-container hover:text-error transition-colors p-1"
                                 >
-                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                  <Trash2 size={18} />
                                 </button>
                               </td>
                            </tr>

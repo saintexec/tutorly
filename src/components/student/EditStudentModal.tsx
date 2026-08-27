@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { X } from "lucide-react";
 
 interface EditStudentModalProps {
   isOpen: boolean;
@@ -80,7 +81,7 @@ export default function EditStudentModal({ isOpen, onClose, onSuccess, student }
         <div className="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low">
           <h2 className="font-800 text-lg text-on-surface tracking-tight">Edit Student Profile</h2>
           <button onClick={onClose} className="text-on-surface-variant hover:text-on-surface">
-            <span className="material-symbols-outlined">close</span>
+            <X size={20} />
           </button>
         </div>
 

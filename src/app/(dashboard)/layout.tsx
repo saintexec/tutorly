@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { Bell } from "lucide-react";
 
 // Assuming you'll want to display real user initials
 export default async function DashboardLayout({
@@ -70,7 +71,7 @@ export default async function DashboardLayout({
                 color: "#6b7280",
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>notifications</span>
+              <Bell size={20} />
               <span style={{
                 position: "absolute",
                 top: "8px",

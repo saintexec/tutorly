@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { X } from "lucide-react";
 
 interface AddStudentModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export default function AddStudentModal({ isOpen, onClose, onSuccess }: AddStude
         <div className="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low">
           <h2 className="font-800 text-lg text-on-surface tracking-tight">Add New Student</h2>
           <button onClick={onClose} className="text-on-surface-variant hover:text-on-surface">
-            <span className="material-symbols-outlined">close</span>
+            <X size={20} />
           </button>
         </div>
 

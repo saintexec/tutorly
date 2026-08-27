@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import StudentAvatar from "./StudentAvatar";
+import { BookOpen, ArrowRight } from "lucide-react";
 
 interface StudentCardProps {
   student: {
@@ -41,7 +42,7 @@ export default function StudentCard({ student }: StudentCardProps) {
             {student.name}
           </h3>
           <p className="flex items-center gap-1.5 text-on-surface-variant text-xs font-600">
-            <span className="material-symbols-outlined text-[16px]">menu_book</span>
+            <BookOpen size={16} />
             {student.subject} • {student.level}
           </p>
         </div>
@@ -51,9 +52,9 @@ export default function StudentCard({ student }: StudentCardProps) {
               <span className="text-[10px] font-700 tracking-widest text-on-surface-variant uppercase opacity-60">Session Rate</span>
               <span className="text-sm font-800 text-on-surface">RM {student.session_rate?.toFixed(2) || "0.00"}</span>
            </div>
-           <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container group-hover:text-white transition-all">
-              <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-           </div>
+            <div className="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container group-hover:text-white transition-all">
+               <ArrowRight size={18} />
+            </div>
         </div>
       </div>
     </Link>

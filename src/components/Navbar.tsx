@@ -7,27 +7,19 @@ import { useState } from "react";
 import QuickLogModal from "./student/QuickLogModal";
 import { useRouter } from "next/navigation";
 
+import { LayoutDashboard, Users, CreditCard, Calendar, Settings, HelpCircle } from "lucide-react";
+
 const navItems = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "Students", href: "/students", icon: "group" },
-  { label: "Payments", href: "/payments", icon: "payments" },
-  { label: "Lessons", href: "/sessions", icon: "event_note" },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Students", href: "/students", icon: Users },
+  { label: "Payments", href: "/payments", icon: CreditCard },
+  { label: "Lessons", href: "/sessions", icon: Calendar },
 ];
 
 const bottomItems = [
-  { label: "Settings", href: "#", icon: "settings" },
-  { label: "Help", href: "#", icon: "help_outline" },
+  { label: "Settings", href: "#", icon: Settings },
+  { label: "Help", href: "#", icon: HelpCircle },
 ];
-
-function NavIcon({ name, className }: { name: string; className?: string }) {
-  return (
-    <span
-      className={`material-symbols-outlined text-[20px] ${className || ""}`}
-    >
-      {name}
-    </span>
-  );
-}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -36,13 +28,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Google Material Symbols */}
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-      />
-
       {/* Desktop Sidebar */}
       <aside
         style={{
@@ -135,15 +120,10 @@ export default function Navbar() {
                   }
                 }}
               >
-                <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "20px",
-                    color: isActive ? "#d4af37" : "rgba(255,255,255,0.5)",
-                  }}
-                >
-                  {item.icon}
-                </span>
+                {(() => {
+                  const Icon = item.icon;
+                  return <Icon size={20} style={{ color: isActive ? "#d4af37" : "rgba(255,255,255,0.5)" }} />;
+                })()}
                 {item.label}
               </Link>
             );
@@ -211,7 +191,10 @@ export default function Navbar() {
                   (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.5)";
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>{item.icon}</span>
+                {(() => {
+                  const Icon = item.icon;
+                  return <Icon size={18} />;
+                })()}
                 {item.label}
               </Link>
             ))}
@@ -235,10 +218,10 @@ export default function Navbar() {
                     : "text-on-surface-variant"
                 }`}
               >
-                <NavIcon
-                  name={item.icon}
-                  className={isActive ? "text-primary" : "text-on-surface-variant"}
-                />
+                {(() => {
+                  const Icon = item.icon;
+                  return <Icon size={20} className={isActive ? "text-primary" : "text-on-surface-variant"} />;
+                })()}
                 <span className="text-[10px] font-600">{item.label}</span>
               </Link>
             );
