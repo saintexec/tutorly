@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Wrench } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About Us — Tutorly",
@@ -34,7 +35,7 @@ export default function AboutPage() {
           We built Tutorly because we saw how much administrative pressure tutors were under. Our full mission statement and team details are coming soon.
         </p>
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#f3e5f5] text-[#512da8] font-bold text-sm tracking-wide">
-          <span className="material-symbols-outlined text-[18px]">engineering</span>
+          <Wrench size={18} />
           Under Construction
         </div>
       </main>

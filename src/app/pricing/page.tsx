@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Hammer } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing — Tutorly",
@@ -34,7 +35,7 @@ export default function PricingPage() {
           We are currently building our pricing models to best serve independent educators in Malaysia. Check back soon!
         </p>
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#e8fbe9] text-[#006e2f] font-bold text-sm tracking-wide">
-          <span className="material-symbols-outlined text-[18px]">build</span>
+          <Hammer size={18} />
           Coming Soon
         </div>
       </main>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateWhatsAppLink, openWhatsAppMessage, generateWhatsAppLinkWithPhone } from "@/lib/whatsapp";
+import { BookOpen, X, CheckCircle2, Share2, ChevronDown, Calendar, Timer, TimerOff, Play, Pause, Sparkles, Wand2, XCircle, Plus, AlertTriangle, Star, CheckCircle, Wallet } from "lucide-react";
 
 interface QuickLogModalProps {
   isOpen: boolean;
@@ -341,7 +342,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         <div style={{ backgroundColor: colors.navy }} className="h-16 px-6 flex items-center justify-between shrink-0 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[#D4AF37]" style={{ fontSize: '24px' }}>auto_stories</span>
+              <BookOpen className="text-[#D4AF37]" size={24} />
             </div>
             <div>
               <h2 className="!text-white font-bold text-lg leading-tight tracking-tight">Academic Atelier</h2>
@@ -352,7 +353,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
             onClick={onClose} 
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[#D4AF37] active:scale-95"
           >
-            <span className="material-symbols-outlined text-[24px]">close</span>
+            <X size={24} />
           </button>
         </div>
 
@@ -360,7 +361,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         {shareLink ? (
           <div className="flex-1 overflow-y-auto p-8 text-center flex flex-col items-center justify-center space-y-6 bg-[#F8FAFC]">
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-2 border border-emerald-100">
-              <span className="material-symbols-outlined text-emerald-500 text-3xl font-bold">check_circle</span>
+              <CheckCircle2 className="text-emerald-500" size={32} />
             </div>
             
             <div>
@@ -384,7 +385,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                 className="w-full h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20"
                 style={{ textDecoration: 'none' }}
               >
-                <span className="material-symbols-outlined fill-white">share</span>
+                <Share2 className="fill-white" size={20} />
                 SHARE TO WHATSAPP
               </a>
               <button
@@ -425,7 +426,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   )}
                 </select>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#1a3a52]">
-                  <span className="material-symbols-outlined text-[20px]">expand_more</span>
+                  <ChevronDown size={20} />
                 </div>
               </div>
             </div>
@@ -440,7 +441,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#7F8C8D]">
-                  <span className="material-symbols-outlined text-[20px]">calendar_today</span>
+                  <Calendar size={20} />
                 </div>
               </div>
             </div>
@@ -474,9 +475,11 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#1E3A5F] text-[20px] animate-pulse">
-                    {timerStatus === 'running' ? 'timer' : 'timer_off'}
-                  </span>
+                  {timerStatus === 'running' ? (
+                    <Timer className="text-[#1E3A5F] animate-pulse" size={20} />
+                  ) : (
+                    <TimerOff className="text-[#1E3A5F]" size={20} />
+                  )}
                 </div>
               </div>
               
@@ -497,7 +500,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   : "bg-[#1E3A5F] text-white hover:opacity-90"
               }`}
             >
-              <span className="material-symbols-outlined">{timerStatus === 'running' ? 'pause_circle' : 'play_circle'}</span>
+              {timerStatus === 'running' ? <Pause size={20} /> : <Play size={20} />}
               {timerStatus === 'idle' ? 'Start' : timerStatus === 'running' ? 'Pause' : 'Resume'}
             </button>
           </div>
@@ -531,13 +534,13 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
           {/* Magic Homework Creator Section */}
           <div className="bg-white rounded-2xl p-6 shadow-ambient border border-[#D4AF37]/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-              <span className="material-symbols-outlined text-6xl text-[#D4AF37]">auto_awesome</span>
+              <Sparkles className="text-[#D4AF37]" size={64} />
             </div>
 
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#D4AF37] text-[18px]">magic_button</span>
+                  <Wand2 className="text-[#D4AF37]" size={18} />
                 </div>
                 <h3 className="text-[#1E3A5F] font-bold tracking-tight">Magic Homework Creator</h3>
               </div>
@@ -556,7 +559,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                 <div key={index} className="flex items-center gap-2 bg-[#F8FAFC] border border-[#1E3A5F]/10 text-[#1E3A5F] px-4 py-2 rounded-xl text-xs font-bold transition-all hover:border-[#D4AF37]/40">
                   {area}
                   <button type="button" onClick={() => handleRemoveFocusArea(index)} className="text-[#7F8C8D] hover:text-red-500 transition-colors">
-                    <span className="material-symbols-outlined text-[14px]">cancel</span>
+                    <XCircle size={14} />
                   </button>
                 </div>
               ))}
@@ -576,7 +579,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   onClick={() => handleAddFocusArea()}
                   className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E3A5F] text-[#D4AF37] hover:bg-[#1E3A5F]/90 transition-all active:scale-90"
                 >
-                  <span className="material-symbols-outlined text-[20px]">add</span>
+                  <Plus size={20} />
                 </button>
               </div>
             </div>
@@ -595,7 +598,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
               ) : (
                 <>
                   <span>GENERATE HOMEWORK</span>
-                  <span className="material-symbols-outlined text-[20px] text-[#D4AF37]">auto_awesome</span>
+                  <Sparkles className="text-[#D4AF37]" size={20} />
                   <div className="shimmer" />
                 </>
               )}
@@ -608,7 +611,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
               >
                 {error ? (
                   <div className="flex items-start gap-3 text-[#E74C3C]">
-                    <span className="material-symbols-outlined">report</span>
+                    <AlertTriangle size={20} />
                     <div className="flex flex-col gap-1">
                       <span className="font-bold uppercase tracking-wider text-[10px]">{error.title}</span>
                       <span className="leading-relaxed">{error.message}</span>
@@ -636,9 +639,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                       onClick={() => setFormData({ ...formData, performance: s })}
                       className="transition-all duration-300 ease-out hover:scale-125 active:scale-95"
                     >
-                      <span className={`material-symbols-outlined text-[28px] transition-colors ${s <= formData.performance ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#7F8C8D] opacity-20"}`}>
-                        grade
-                      </span>
+                      <Star size={28} className={`transition-colors ${s <= formData.performance ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#7F8C8D] opacity-20"}`} />
                     </button>
                   ))}
                 </div>
@@ -650,9 +651,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   onClick={() => setFormData({ ...formData, paid: !formData.paid })}
                   className={`w-full h-12 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ease-out border-2 font-bold text-xs tracking-widest ${formData.paid ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "bg-white border-[#1E3A5F]/10 text-[#1E3A5F] hover:border-[#1E3A5F] active:scale-95"}`}
                 >
-                  <span className="material-symbols-outlined text-[20px]">
-                    {formData.paid ? "verified" : "account_balance_wallet"}
-                  </span>
+                  {formData.paid ? <CheckCircle size={20} /> : <Wallet size={20} />}
                   {formData.paid ? "SETTLED" : "PENDING"}
                 </button>
               </div>
@@ -695,7 +694,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
               ) : (
                 <>
                   Log & Share
-                  <span className="material-symbols-outlined text-[18px]" style={{ color: '#25D366' }}>share</span>
+                  <Share2 size={18} style={{ color: '#25D366' }} />
                 </>
               )}
             </button>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { MessageSquare, CheckCircle2 } from 'lucide-react';
 
 interface Props {
   tutorName: string;
@@ -32,14 +33,14 @@ export default function PublicDashboardFooter({ tutorName, tutorWhatsApp }: Prop
           style={{ textDecoration: 'none' }}
           className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-3 w-full max-w-md mx-auto transition-all active:scale-95 shadow-lg shadow-[#25D366]/20 text-center"
         >
-          <span className="material-symbols-outlined fill-white">chat</span>
+          <MessageSquare className="fill-white" size={20} />
           Message on WhatsApp
         </a>
       )}
       
       <div className="pt-8 border-t border-gray-50">
         <div className="flex items-center justify-center gap-2 text-[#1E3A5F] opacity-40 grayscale group hover:grayscale-0 transition-all">
-          <span className="material-symbols-outlined text-[18px]">verified</span>
+          <CheckCircle2 size={18} />
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] transition-opacity">Powered by Tutorly</p>
         </div>
       </div>

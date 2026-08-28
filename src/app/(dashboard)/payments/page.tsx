@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { Wallet, Clock, CheckCircle2, BarChart3, AlertTriangle, Receipt, Search } from "lucide-react";
 
 type PaymentRecord = {
   id: string;
@@ -221,7 +222,10 @@ export default function PaymentsPage() {
                 flexShrink: 0,
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "22px", color: card.color }}>{card.icon}</span>
+              {card.icon === "account_balance_wallet" && <Wallet size={22} color={card.color} />}
+              {card.icon === "pending_actions" && <Clock size={22} color={card.color} />}
+              {card.icon === "check_circle" && <CheckCircle2 size={22} color={card.color} />}
+              {card.icon === "bar_chart" && <BarChart3 size={22} color={card.color} />}
             </div>
             <div>
               <p style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#9ca3af", margin: "0 0 2px" }}>
@@ -246,7 +250,7 @@ export default function PaymentsPage() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-            <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#d4af37" }}>warning</span>
+            <AlertTriangle size={20} color="#d4af37" />
             <h2 style={{ fontSize: "15px", fontWeight: 800, margin: 0, color: "white" }}>
               Outstanding Balances
             </h2>
@@ -339,12 +343,11 @@ export default function PaymentsPage() {
       {/* ── Search + Filter ─────────────────────────── */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
         <div style={{ position: "relative", flex: "1 1 260px", minWidth: "200px" }}>
-          <span
-            className="material-symbols-outlined"
-            style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", fontSize: "18px", color: "#9ca3af", pointerEvents: "none" }}
+          <div
+            style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", display: "flex", alignItems: "center", color: "#9ca3af" }}
           >
-            search
-          </span>
+            <Search size={18} />
+          </div>
           <input
             type="text"
             placeholder="Search student or topic…"
@@ -418,9 +421,9 @@ export default function PaymentsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: "64px 32px", textAlign: "center" }}>
-            <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "#d1d5db", display: "block", marginBottom: "12px" }}>
-              receipt_long
-            </span>
+            <div className="flex justify-center mb-3">
+              <Receipt size={48} color="#d1d5db" />
+            </div>
             <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>
               {search || filter !== "all" ? "No records match" : "No payment records yet"}
             </h3>

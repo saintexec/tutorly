@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { Calendar, Users, CheckCircle2, CreditCard, PlusCircle, MoreVertical } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -163,7 +164,7 @@ export default async function DashboardPage() {
             </p>
           </div>
           <button className="btn-schedule">
-            <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>calendar_today</span>
+            <Calendar size={18} />
             View Schedule
           </button>
         </div>
@@ -185,17 +186,17 @@ export default async function DashboardPage() {
           minHeight: "140px",
         }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "12px",
-              background: "rgba(212,175,55,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#d4af37" }}>group</span>
-            </div>
+              <div style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                background: "rgba(212,175,55,0.15)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <Users size={20} color="#d4af37" />
+              </div>
             <span style={{
               fontSize: "11px",
               fontWeight: 600,
@@ -227,17 +228,17 @@ export default async function DashboardPage() {
           minHeight: "140px",
         }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "12px",
-              background: "rgba(34,197,94,0.12)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#22c55e" }}>event_available</span>
-            </div>
+              <div style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                background: "rgba(34,197,94,0.12)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <CheckCircle2 size={20} color="#22c55e" />
+              </div>
             {nextSessionTime ? (
               <span style={{
                 fontSize: "11px",
@@ -281,17 +282,17 @@ export default async function DashboardPage() {
           minHeight: "140px",
         }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "12px",
-              background: "rgba(239,68,68,0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "#ef4444" }}>payments</span>
-            </div>
+              <div style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                background: "rgba(239,68,68,0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <CreditCard size={20} color="#ef4444" />
+              </div>
             {unpaidSessions > 0 && (
               <span
                 title="Tap to review unpaid sessions"
@@ -337,26 +338,26 @@ export default async function DashboardPage() {
         }}>
           {todaysSessions.length === 0 ? (
             <div style={{ padding: "48px 24px", textAlign: "center" }}>
-              <div style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "16px",
-                background: "rgba(26,58,82,0.06)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 16px",
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "32px", color: "#6b7280" }}>calendar_add_on</span>
-              </div>
-              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>No sessions today</h3>
-              <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 20px", lineHeight: 1.6, maxWidth: "280px", marginLeft: "auto", marginRight: "auto" }}>
-                Your schedule is clear — a good time to follow up with students or generate lesson plans.
-              </p>
-              <button className="btn-log-cta">
-                <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>add_circle</span>
-                Log a Past Session
-              </button>
+                <div style={{
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "16px",
+                  background: "rgba(26,58,82,0.06)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 16px",
+                }}>
+                  <Calendar size={32} color="#6b7280" />
+                </div>
+                <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>No sessions today</h3>
+                <p style={{ fontSize: "13px", color: "#6b7280", margin: "0 0 20px", lineHeight: 1.6, maxWidth: "280px", marginLeft: "auto", marginRight: "auto" }}>
+                  Your schedule is clear — a good time to follow up with students or generate lesson plans.
+                </p>
+                <button className="btn-log-cta">
+                  <PlusCircle size={16} />
+                  Log a Past Session
+                </button>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -408,7 +409,7 @@ export default async function DashboardPage() {
                         {isUnpaid ? "Unpaid" : isCompleted ? "Completed" : "Scheduled"}
                       </span>
                       <button className="btn-kebab">
-                        <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>more_vert</span>
+                        <MoreVertical size={18} />
                       </button>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Sparkles, Users, CreditCard, Calendar } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Tutorly — The Academic Atelier for Independent Educators",
@@ -146,7 +147,7 @@ export default function LandingPage() {
                 <div className="pt-2">
                   <div className="p-3 bg-[#022448] text-white rounded-xl flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm">auto_fix</span>
+                      <Sparkles size={16} />
                       <span className="text-xs font-semibold">AI Lesson Plan generated</span>
                     </div>
                     <span className="text-[11px] text-[#adc8f5] font-bold">View &rarr;</span>
@@ -192,26 +193,28 @@ export default function LandingPage() {
                 step: "01",
                 title: "Onboard your students",
                 desc: "Drop in student details, subjects, and custom rates in under two minutes. Everything is instantly organized.",
-                icon: "group"
+                icon: Users
               },
               {
                 step: "02",
                 title: "Teach & log with one tap",
                 desc: "Generate structured SPM/IGCSE lesson plans with AI and log your sessions instantly after class.",
-                icon: "auto_fix"
+                icon: Sparkles
               },
               {
                 step: "03",
                 title: "Get paid automatically",
                 desc: "Send professional automated invoices and WhatsApp payment reminders with zero awkward money talks.",
-                icon: "payments"
+                icon: CreditCard
               }
-            ].map((item, idx) => (
+            ].map((item, idx) => {
+              const IconComp = item.icon;
+              return (
               <div key={idx} className="bg-white rounded-3xl p-8 border border-[#eceef0] shadow-sm hover:shadow-md transition-shadow space-y-6 flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="w-12 h-12 rounded-2xl bg-[#e3f2fd] flex items-center justify-center text-[#1565c0]">
-                      <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
+                      <IconComp size={24} />
                     </div>
                     <span className="font-[var(--font-display)] font-800 text-2xl text-[#c4c6cf]/40">{item.step}</span>
                   </div>
@@ -219,7 +222,7 @@ export default function LandingPage() {
                   <p className="text-[13px] text-[#43474e] leading-relaxed">{item.desc}</p>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </section>
 
@@ -242,7 +245,7 @@ export default function LandingPage() {
             <div className="lg:col-span-2 bg-white rounded-3xl p-8 lg:p-12 border border-[#eceef0] shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
               <div className="space-y-4 max-w-lg mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-[#fff8e1] flex items-center justify-center text-[#f57f17]">
-                  <span className="material-symbols-outlined text-[24px]">auto_fix</span>
+                  <Sparkles size={24} />
                 </div>
                 <h3 className="font-[var(--font-display)] text-2xl font-800 text-[#022448]">AI Lesson Planner</h3>
                 <p className="text-[13px] text-[#43474e] leading-relaxed">
@@ -264,7 +267,7 @@ export default function LandingPage() {
             <div className="bg-[#022448] text-white rounded-3xl p-8 lg:p-10 shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow relative overflow-hidden">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-[#1e3a5f] flex items-center justify-center text-[#adc8f5]">
-                  <span className="material-symbols-outlined text-[24px]">group</span>
+                  <Users size={24} />
                 </div>
                 <h3 className="font-[var(--font-display)] text-2xl font-800 text-white !text-white">Student Care</h3>
                 <p className="text-[13px] text-[#adc8f5] leading-relaxed">
@@ -282,7 +285,7 @@ export default function LandingPage() {
             <div className="bg-[#006e2f] text-white rounded-3xl p-8 lg:p-10 shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow relative overflow-hidden">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-[#005321] flex items-center justify-center text-[#6bff8f]">
-                  <span className="material-symbols-outlined text-[24px]">payments</span>
+                  <CreditCard size={24} />
                 </div>
                 <h3 className="font-[var(--font-display)] text-2xl font-800 text-white !text-white">Automated Invoicing</h3>
                 <p className="text-[13px] text-[#e8fbe9] leading-relaxed">
@@ -300,7 +303,7 @@ export default function LandingPage() {
             <div className="lg:col-span-2 bg-white rounded-3xl p-8 lg:p-12 border border-[#eceef0] shadow-sm flex flex-col justify-between group hover:shadow-md transition-shadow">
               <div className="space-y-4 max-w-lg mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-[#e3f2fd] flex items-center justify-center text-[#1565c0]">
-                  <span className="material-symbols-outlined text-[24px]">calendar_month</span>
+                  <Calendar size={24} />
                 </div>
                 <h3 className="font-[var(--font-display)] text-2xl font-800 text-[#022448]">Effortless Logging & Parent Reports</h3>
                 <p className="text-[13px] text-[#43474e] leading-relaxed">

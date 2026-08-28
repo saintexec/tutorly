@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { User, Play, Star } from "lucide-react";
 
 function SessionLogContent() {
   const router = useRouter();
@@ -147,7 +148,7 @@ function SessionLogContent() {
           {isStarted ? "Lesson in Progress" : "Log New Session"}
         </h1>
         <p className="text-on-surface-variant font-600 flex items-center justify-center gap-2">
-          <span className="material-symbols-outlined text-[20px]">person</span>
+          <User size={20} />
           Student: {student.name} • {student.subject}
         </p>
       </div>
@@ -155,7 +156,7 @@ function SessionLogContent() {
       {!isStarted ? (
         <div className="bg-surface-container-lowest rounded-3xl p-8 shadow-ambient border border-outline-variant/30 text-center space-y-6">
           <div className="w-20 h-20 bg-primary-container rounded-full flex items-center justify-center text-white mx-auto shadow-lg">
-            <span className="material-symbols-outlined text-[40px]">play_arrow</span>
+            <Play size={40} className="fill-white ml-1" />
           </div>
           <div className="space-y-1">
              <p className="text-sm font-700 text-on-surface-variant uppercase tracking-widest">Snapshot Rate</p>
@@ -218,9 +219,7 @@ function SessionLogContent() {
                     onClick={() => setRating(s)}
                     className="transition-all active:scale-95"
                   >
-                    <span className={`material-symbols-outlined text-4xl ${s <= rating ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"}`}>
-                      star
-                    </span>
+                    <Star size={36} className={s <= rating ? "text-[#edbf7f] fill-[#edbf7f]" : "text-outline-variant opacity-30"} />
                   </button>
                 ))}
               </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { generateWhatsAppLinkWithPhone } from "@/lib/whatsapp";
 import toast from "react-hot-toast";
+import { X, Star, FileText, Sparkles, Share2 } from "lucide-react";
 
 interface SessionDetailsModalProps {
   isOpen: boolean;
@@ -75,7 +76,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
             onClick={onClose} 
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[#D4AF37]"
           >
-            <span className="material-symbols-outlined">close</span>
+            <X size={20} />
           </button>
         </div>
 
@@ -100,12 +101,11 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
               <span className="text-[10px] uppercase font-bold tracking-widest text-[#7F8C8D]">Performance</span>
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <span 
+                  <Star 
                     key={s} 
-                    className={`material-symbols-outlined text-[18px] ${s <= (session.performance || 0) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#7F8C8D] opacity-20"}`}
-                  >
-                    grade
-                  </span>
+                    size={18} 
+                    className={s <= (session.performance || 0) ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#7F8C8D] opacity-20"}
+                  />
                 ))}
                 <span className="text-xs font-bold text-[#1E3A5F] ml-1">{session.performance}/5</span>
               </div>
@@ -122,7 +122,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
           {/* Session Notes */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[#1E3A5F]">
-              <span className="material-symbols-outlined text-[20px]">description</span>
+              <FileText size={20} />
               <h3 className="text-sm font-bold uppercase tracking-widest">Session Notes</h3>
             </div>
             <div className="bg-white p-5 rounded-xl border border-[#1E3A5F]/5 shadow-sm min-h-[100px]">
@@ -135,7 +135,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
           {/* Homework Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[#1E3A5F]">
-              <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+              <Sparkles size={20} />
               <h3 className="text-sm font-bold uppercase tracking-widest">Homework Assignments</h3>
             </div>
             <div className="bg-[#1E3A5F]/5 p-5 rounded-xl border-t-2 border-[#D4AF37] shadow-sm">
@@ -152,7 +152,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
             onClick={handleShareWhatsApp}
             className="flex-[2] h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20 text-center"
           >
-            <span className="material-symbols-outlined fill-white">share</span>
+            <Share2 className="fill-white" size={20} />
             SHARE TO WHATSAPP
           </button>
           <button

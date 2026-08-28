@@ -10,6 +10,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
+import { TrendingUp } from 'lucide-react';
 
 interface PerformanceData {
   week: string;
@@ -24,7 +25,7 @@ export default function PerformanceGraph({ data }: Props) {
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-2xl shadow-sm p-12 text-center border border-gray-100">
-        <span className="material-symbols-outlined text-gray-300 text-5xl mb-4">analytics</span>
+        <TrendingUp className="text-gray-300 mx-auto mb-4" size={48} />
         <p className="text-[#7F8C8D] font-medium">No performance data captured yet.</p>
       </div>
     );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Star, History } from 'lucide-react';
 
 interface Session {
   id: string;
@@ -25,12 +26,11 @@ export default function RecentSessionsList({ sessions }: Props) {
     return (
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((i) => (
-          <span 
+          <Star 
             key={i} 
-            className={`material-symbols-outlined text-[18px] ${i <= rating ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-gray-200'}`}
-          >
-            grade
-          </span>
+            size={18} 
+            className={i <= rating ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-gray-200'}
+          />
         ))}
       </div>
     );
@@ -40,7 +40,7 @@ export default function RecentSessionsList({ sessions }: Props) {
     <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-8 h-8 rounded-lg bg-[#1E3A5F]/5 flex items-center justify-center">
-          <span className="material-symbols-outlined text-[#1E3A5F] text-[20px]">history</span>
+          <History className="text-[#1E3A5F]" size={20} />
         </div>
         <h2 className="text-xl font-bold text-[#1E3A5F] tracking-tight">Recent Learning History</h2>
       </div>

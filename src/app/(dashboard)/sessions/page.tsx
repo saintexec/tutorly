@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import QuickLogModal from "@/components/student/QuickLogModal";
 import SessionDetailsModal from "@/components/student/SessionDetailsModal";
+import { PlusCircle, Calendar, CheckCircle2, Clock, Star, Search, FileText, Eye, Trash2 } from "lucide-react";
 
 type Session = {
   id: string;
@@ -174,7 +175,7 @@ export default function SessionsPage() {
             whiteSpace: "nowrap",
           }}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add_circle</span>
+          <PlusCircle size={18} />
           Log Session
         </button>
       </div>
@@ -217,7 +218,10 @@ export default function SessionsPage() {
                 flexShrink: 0,
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: "22px", color: card.color }}>{card.icon}</span>
+              {card.icon === "event_note" && <Calendar size={22} color={card.color} />}
+              {card.icon === "check_circle" && <CheckCircle2 size={22} color={card.color} />}
+              {card.icon === "pending" && <Clock size={22} color={card.color} />}
+              {card.icon === "grade" && <Star size={22} color={card.color} />}
             </div>
             <div>
               <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 2px" }}>
@@ -235,20 +239,20 @@ export default function SessionsPage() {
       <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
         {/* Search */}
         <div style={{ position: "relative", flex: "1 1 260px", minWidth: "200px" }}>
-          <span
-            className="material-symbols-outlined"
+          <div
             style={{
               position: "absolute",
               left: "14px",
               top: "50%",
               transform: "translateY(-50%)",
-              fontSize: "18px",
-              color: "#9ca3af",
               pointerEvents: "none",
+              display: "flex",
+              alignItems: "center",
+              color: "#9ca3af",
             }}
           >
-            search
-          </span>
+            <Search size={18} />
+          </div>
           <input
             type="text"
             placeholder="Search student or topic…"
@@ -323,9 +327,9 @@ export default function SessionsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: "64px 32px", textAlign: "center" }}>
-            <span className="material-symbols-outlined" style={{ fontSize: "48px", color: "#d1d5db", display: "block", marginBottom: "12px" }}>
-              event_busy
-            </span>
+            <div className="flex justify-center mb-3">
+              <FileText size={48} color="#d1d5db" />
+            </div>
             <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1a3a52", margin: "0 0 6px" }}>
               {search || filterStatus !== "all" ? "No sessions match your filters" : "No sessions yet"}
             </h3>
@@ -464,16 +468,14 @@ export default function SessionsPage() {
                         {s.performance != null ? (
                           <div style={{ display: "flex", justifyContent: "center", gap: "2px" }}>
                             {[1, 2, 3, 4, 5].map(star => (
-                              <span
+                              <Star
                                 key={star}
-                                className="material-symbols-outlined"
+                                size={15}
                                 style={{
-                                  fontSize: "15px",
                                   color: star <= s.performance ? "#d4af37" : "#e5e7eb",
+                                  fill: star <= s.performance ? "#d4af37" : "transparent",
                                 }}
-                              >
-                                grade
-                              </span>
+                              />
                             ))}
                           </div>
                         ) : (
@@ -507,48 +509,48 @@ export default function SessionsPage() {
                       {/* Actions */}
                       <td style={{ padding: "16px 20px", textAlign: "right" }}>
                         <div style={{ display: "flex", justifyContent: "flex-end", gap: "6px" }}>
-                          <button
-                            onClick={e => { e.stopPropagation(); setSelectedSession(s); setIsSessionModalOpen(true); }}
-                            title="View details"
-                            style={{
-                              width: "32px",
-                              height: "32px",
-                              borderRadius: "8px",
-                              border: "none",
-                              background: "rgba(26,58,82,0.06)",
-                              color: "#1a3a52",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              transition: "background 0.15s",
-                            }}
-                            onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(26,58,82,0.12)")}
-                            onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(26,58,82,0.06)")}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>visibility</span>
-                          </button>
-                          <button
-                            onClick={e => { e.stopPropagation(); handleDeleteSession(s.id); }}
-                            title="Delete session"
-                            style={{
-                              width: "32px",
-                              height: "32px",
-                              borderRadius: "8px",
-                              border: "none",
-                              background: "rgba(239,68,68,0.06)",
-                              color: "#ef4444",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              transition: "background 0.15s",
-                            }}
-                            onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.14)")}
-                            onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.06)")}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>delete</span>
-                          </button>
+                           <button
+                             onClick={e => { e.stopPropagation(); setSelectedSession(s); setIsSessionModalOpen(true); }}
+                             title="View details"
+                             style={{
+                               width: "32px",
+                               height: "32px",
+                               borderRadius: "8px",
+                               border: "none",
+                               background: "rgba(26,58,82,0.06)",
+                               color: "#1a3a52",
+                               cursor: "pointer",
+                               display: "flex",
+                               alignItems: "center",
+                               justifyContent: "center",
+                               transition: "background 0.15s",
+                             }}
+                             onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(26,58,82,0.12)")}
+                             onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(26,58,82,0.06)")}
+                           >
+                             <Eye size={16} />
+                           </button>
+                           <button
+                             onClick={e => { e.stopPropagation(); handleDeleteSession(s.id); }}
+                             title="Delete session"
+                             style={{
+                               width: "32px",
+                               height: "32px",
+                               borderRadius: "8px",
+                               border: "none",
+                               background: "rgba(239,68,68,0.06)",
+                               color: "#ef4444",
+                               cursor: "pointer",
+                               display: "flex",
+                               alignItems: "center",
+                               justifyContent: "center",
+                               transition: "background 0.15s",
+                             }}
+                             onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.14)")}
+                             onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(239,68,68,0.06)")}
+                           >
+                             <Trash2 size={16} />
+                           </button>
                         </div>
                       </td>
                     </tr>
