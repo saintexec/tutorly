@@ -23,10 +23,6 @@ export function generatePublicAccessToken(
   }
   const tokenSecret = secret;
 
-  console.log('--- HMAC_SECRET Generation Debug ---');
-  console.log('HMAC_SECRET in generate (first 4 chars):', tokenSecret.substring(0, 4));
-  console.log('Is using fallback secret?', tokenSecret === 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898');
-
   // Create payload
   const now = Date.now();
   const expiresAt = now + expiresInDays * 24 * 60 * 60 * 1000;
@@ -38,15 +34,21 @@ export function generatePublicAccessToken(
     expiresAt,
   };
 
-  // Encode payload as base64
+  // Encode payload as base64url (URL safe)
   const payloadString = JSON.stringify(payload);
-  const payloadBase64 = Buffer.from(payloadString).toString('base64');
+  const payloadBase64 = Buffer.from(payloadString).toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 
   // Sign with HMAC-SHA256
   const signature = crypto
     .createHmac('sha256', tokenSecret)
     .update(payloadBase64)
-    .digest('base64');
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 
   // Combine payload.signature
   return `${payloadBase64}.${signature}`;
@@ -60,8 +62,10 @@ export function verifyPublicAccessToken(
   token: string
 ): { valid: boolean; payload?: TokenPayload; error?: string } {
   try {
+    // Decode if URL encoded
+    const decodedToken = decodeURIComponent(token);
     // Split token into payload and signature
-    const [payloadBase64, signature] = token.split('.');
+    const [payloadBase64, signature] = decodedToken.split('.');
 
     if (!payloadBase64 || !signature) {
       return { valid: false, error: 'Invalid token format' };
@@ -77,18 +81,33 @@ export function verifyPublicAccessToken(
     const expectedSignature = crypto
       .createHmac('sha256', tokenSecret)
       .update(payloadBase64)
-      .digest('base64');
+      .digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
 
     console.log('--- HMAC_SECRET Verification Debug ---');
     console.log('HMAC_SECRET in verify (first 4 chars):', tokenSecret.substring(0, 4));
     console.log('Is using fallback secret?', tokenSecret === 'default-secret-change-this-in-production-f3c3365b8bf54b6c123f765ae882a7dcaf9ccf365f5a094be8632d03874ea898');
     
-    if (signature !== expectedSignature) {
+    // Verify signature using timingSafeEqual
+    const sigBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expectedSignature);
+
+    if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
       return { valid: false, error: 'Token signature is invalid' };
     }
 
+    // Restore standard base64 padding/chars for decoding
+    let base64Standard = payloadBase64
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    while (base64Standard.length % 4) {
+      base64Standard += '=';
+    }
+
     // Decode payload
-    const payloadString = Buffer.from(payloadBase64, 'base64').toString('utf-8');
+    const payloadString = Buffer.from(base64Standard, 'base64').toString('utf-8');
     const payload: TokenPayload = JSON.parse(payloadString);
 
     const nowSeconds = Math.floor(Date.now() / 1000);

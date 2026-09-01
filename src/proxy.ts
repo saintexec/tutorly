@@ -1,7 +1,7 @@
 import { updateSession } from '@/lib/supabase/middleware'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const publicRoutes = ['/login', '/signup', '/booking']
+const publicRoutes = ['/login', '/signup', '/booking', '/student']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -22,7 +22,12 @@ export async function proxy(request: NextRequest) {
   }
 
   // 3. Logic for unauthenticated users
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route))
+  const isPublicRoute = publicRoutes.some((route) => {
+    if (route === '/student') {
+      return /^\/student\/[^\/]+\/public$/.test(pathname);
+    }
+    return pathname.startsWith(route);
+  })
   const isRoot = pathname === '/'
 
   if (!isRoot && !isPublicRoute) {

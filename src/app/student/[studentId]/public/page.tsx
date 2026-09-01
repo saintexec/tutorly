@@ -8,6 +8,8 @@ import RecentSessionsList from './components/RecentSessionsList';
 import PublicDashboardFooter from './components/PublicDashboardFooter';
 import ErrorPage from './components/ErrorPage';
 
+export const dynamic = 'force-dynamic';
+
 // Next.js 16/15 types: params and searchParams are Promises
 interface PageProps {
   params: Promise<{ studentId: string }>;
@@ -79,80 +81,40 @@ export default async function PublicStudentPage(props: PageProps) {
     return <ErrorPage error="Access denied. Student ID mismatch." />;
   }
 
-  // Step 2: Fetch data from Supabase
-  // We use the anon key directly for this public page
+  // Step 2: Fetch data from Supabase using RPC function
+  // We use the anon key directly with the secure RPC function
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
   );
 
   try {
-    // Simplified fetch to debug RLS/Filtering issues
-    const { data: studentData, error: studentError } = await supabase
-      .from('students')
-      .select('id, name, subject, level, created_at, tutor_id')
-      .eq('id', studentId)
-      .single();
+    const { data: dashboardResult, error: rpcError } = await supabase.rpc(
+      'get_public_student_dashboard',
+      {
+        p_student_id: studentId,
+        p_tutor_id: payload.tutorId,
+      }
+    );
 
-    console.log('=== STUDENT FETCH DEBUG ===');
-    console.log('Query params:');
-    console.log('  studentId:', studentId);
-    console.log('  tutorId (from token):', payload.tutorId);
-    console.log('Query result:');
-    console.log('  studentData:', studentData);
-    console.log('  studentError:', studentError);
-    if (studentError) {
-      console.log('  studentError.message:', studentError.message);
-      console.log('  studentError.code:', studentError.code);
-      console.log('  studentError.details:', studentError.details);
+    console.log('=== RPC DASHBOARD FETCH DEBUG ===');
+    console.log('RPC result:', dashboardResult);
+    console.log('RPC error:', rpcError);
+
+    if (rpcError || !dashboardResult || !dashboardResult.student) {
+      console.error("Dashboard fetch error:", rpcError);
+      return <ErrorPage error={`Failed to load student dashboard: ${rpcError?.message || 'Access denied'}`} />;
     }
 
-    if (studentError || !studentData) {
-      console.error("Student fetch error:", studentError);
-      return <ErrorPage error={`Failed to load student: ${studentError?.message || 'Access denied'}`} />;
-    }
-
-    // Manual tutor check after successful fetch
-    if (studentData.tutor_id !== payload.tutorId) {
-      console.error('Tutor ID mismatch!', {
-        studentTutor: studentData.tutor_id,
-        tokenTutor: payload.tutorId
-      });
-      return <ErrorPage error="Access denied. You do not have permission to view this student." />;
-    }
-
-    // Fetch tutor info
-    const { data: tutorData, error: tutorError } = await supabase
-      .from('users')
-      .select('name, parent_whatsapp')
-      .eq('id', payload.tutorId)
-      .single();
-
-    if (tutorError || !tutorData) {
-      console.error("Tutor fetch error:", tutorError);
-      return <ErrorPage error="Tutor information not found." />;
-    }
-
-    // Fetch all sessions (limited to 50 for performance/security)
-    const { data: allSessions, error: sessionsError } = await supabase
-      .from('sessions')
-      .select('id, date, topic, performance')
-      .eq('student_id', studentId)
-      .order('date', { ascending: false })
-      .limit(50);
-
-    if (sessionsError) {
-      console.error("Sessions fetch error:", sessionsError);
-      return <ErrorPage error="Unable to load session data." />;
-    }
-
-    const sessions = allSessions || [];
+    const studentData = dashboardResult.student;
+    const tutorData = dashboardResult.tutor;
+    const sessions: Session[] = dashboardResult.sessions || [];
 
     // Step 3: Calculate metrics
     const totalSessions = sessions.length;
     const averageRating =
       totalSessions > 0
-        ? sessions.reduce((sum, s) => sum + (s.performance || 0), 0) / totalSessions
+        ? sessions.reduce((sum: number, s: Session) => sum + (s.performance || 0), 0) / totalSessions
         : 0;
     const lastSessionDate = sessions.length > 0 ? sessions[0].date : null;
 
@@ -160,8 +122,8 @@ export default async function PublicStudentPage(props: PageProps) {
     let currentStreak = 0;
     if (sessions.length > 0) {
       const sortedDates = sessions
-        .map((s) => new Date(s.date).getTime())
-        .sort((a, b) => b - a);
+        .map((s: Session) => new Date(s.date).getTime())
+        .sort((a: number, b: number) => b - a);
 
       let streakCount = 1;
       for (let i = 1; i < sortedDates.length; i++) {

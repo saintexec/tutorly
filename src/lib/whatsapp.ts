@@ -47,22 +47,30 @@ export async function generateWhatsAppLink(studentData: StudentData): Promise<Wh
     const starEmoji = '\u2B50';
     const stars = Array(performance).fill(starEmoji).join('');
 
-    // Build message with emojis using Unicode escapes and include public link
-    const message = `\u{1F4D1} *Session Review* \u{1F4D1}
+    // Clean up raw markdown headers from AI homework text for pristine WhatsApp rendering
+    const cleanedHomework = (homeworkAssignments || 'No homework assigned')
+      .replace(/###\s*\*?/g, '\n\u{1F4CC} *')
+      .replace(/##\s*\*?/g, '\n\u{1F4CC} *')
+      .replace(/\*\*\*/g, '*')
+      .trim();
 
-\u{1F9D1}\u{200D}\u{1F3EB} *Student:* ${name}
-\u{1F4C5} *Date:* ${date}
+    // Build message with gorgeous emojis and clean formatting for parents
+    const message = `🎓 *TUTORLY SESSION REPORT* 🎓
+----------------------------------------
+👤 *Student:* ${name}
+📅 *Date:* ${date}
+⭐ *Performance:* ${stars} *(${performance}/5)*
 
-\u{2B50} *Performance:* ${stars} (${performance}/5)
+📝 *Session Notes:*
+${sessionNotes || 'Great session today! Progress was made.'}
 
-\u{1F4DD} *Session Notes:*
-${sessionNotes || 'No notes'}
+📚 *Homework & Tasks:*
+${cleanedHomework}
+----------------------------------------
+👉 *Track full progress & history:*
+${publicLink}
 
-\u{1F4A1} *Homework Assignments:*
-${homeworkAssignments || 'No homework assigned'}
-
-\u{1F50D} *View full progress:*
-${publicLink}`;
+_Keep up the fantastic work!_ 💫`;
 
     // Encode message for WhatsApp API
     const encodedMessage = encodeURIComponent(message);

@@ -26,9 +26,11 @@ export async function updateSession(request: NextRequest) {
   )
 
   // Refresh session — IMPORTANT: must not have any logic between createServerClient and getUser
+  const startAuth = Date.now();
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  console.log(`[TIMING] proxy.ts / updateSession() getUser(): ${Date.now() - startAuth}ms`);
 
   return { supabaseResponse, user }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import { generateWhatsAppLink, openWhatsAppMessage, generateWhatsAppLinkWithPhone } from "@/lib/whatsapp";
 import { BookOpen, X, CheckCircle2, Share2, ChevronDown, Calendar, Timer, TimerOff, Play, Pause, Sparkles, Wand2, XCircle, Plus, AlertTriangle, Star, CheckCircle, Wallet } from "lucide-react";
@@ -26,6 +27,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
   const [fetchingStudents, setFetchingStudents] = useState(false);
   const [aiGenerating, setAiGenerating] = useState(false);
   const [error, setError] = useState<{title: string, message: string} | null>(null);
+  const [topicError, setTopicError] = useState<string | null>(null);
   const [students, setStudents] = useState<StudentOption[]>([]);
   const [newFocusArea, setNewFocusArea] = useState("");
   const [shareLink, setShareLink] = useState<string | null>(null);
@@ -35,28 +37,60 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
   const [timerStatus, setTimerStatus] = useState<'idle' | 'running' | 'paused' | 'ended'>('idle');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     studentId: studentId || "",
     sessionRate: sessionRate || 0,
     date: new Date().toISOString().split('T')[0],
     topic: "",
-    performance: 5,
+    performance: 0,
     paid: false,
     notes: "",
     homework: "",
     focusAreas: [] as string[],
     durationMinutes: 0,
-  });
+  };
 
-  // Persistence logic
+  const [formData, setFormData] = useState(initialFormData);
+
+  const resetForm = () => {
+    setFormData({
+      studentId: studentId || "",
+      sessionRate: sessionRate || 0,
+      date: new Date().toISOString().split('T')[0],
+      topic: "",
+      performance: 0,
+      paid: false,
+      notes: "",
+      homework: "",
+      focusAreas: [],
+      durationMinutes: 0,
+    });
+    setTimerSeconds(0);
+    setTimerStatus('idle');
+    setTopicError(null);
+    setError(null);
+  };
+
+  // Persistence logic & Body scroll lock & Date refresh on open
   useEffect(() => {
-    if (isOpen && !studentId) {
-      const lastId = localStorage.getItem('lastSelectedStudentId');
-      if (lastId) {
-        setFormData(prev => ({ ...prev, studentId: lastId }));
-        // Also find session rate for this student if possible
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      setFormData(prev => ({
+        ...prev,
+        date: new Date().toISOString().split('T')[0],
+      }));
+      if (!studentId) {
+        const lastId = localStorage.getItem('lastSelectedStudentId');
+        if (lastId) {
+          setFormData(prev => ({ ...prev, studentId: lastId }));
+        }
       }
+    } else {
+      document.body.style.overflow = "unset";
     }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen, studentId]);
 
   // Timer Logic
@@ -206,6 +240,19 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
   };
 
   const handleFinalizeAndShare = async () => {
+    if (!formData.studentId) {
+      setError({ title: "Validation Error", message: "Please select a student before saving." });
+      return;
+    }
+    if (!formData.topic || !formData.topic.trim()) {
+      setTopicError("Please provide a Topic / Lesson Unit.");
+      return;
+    }
+    if (!formData.performance || formData.performance < 1) {
+      setError({ title: "Validation Error", message: "Please select a performance rating (1 to 5 stars)." });
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -252,20 +299,24 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         return;
       }
 
-      // 5. Generate WhatsApp link
+      // 5. Generate WhatsApp link and directly open in new tab
       const { link } = await generateWhatsAppLinkWithPhone({
         name: studentData.name,
         studentId: formData.studentId,
         date: formData.date,
         performance: formData.performance,
-        focus_areas: formData.focusAreas, // Changed parameter name to match schema/needs
+        focus_areas: formData.focusAreas,
         sessionNotes: formData.notes,
         homeworkAssignments: formData.homework,
       } as any, studentData.parent_whatsapp);
 
-      // Set the generated share link state to trigger the success screen with native anchor
-      setShareLink(link);
+      if (link) {
+        window.open(link, '_blank');
+      }
+
       onSuccess();
+      resetForm();
+      onClose();
     } catch (err: any) {
       console.error("Error in handleFinalizeAndShare:", err);
       setError({ title: "Sync Error", message: err.message || "Failed to log and share session" });
@@ -279,6 +330,14 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
     if (e) e.preventDefault();
     if (!formData.studentId) {
       setError({ title: "Validation Error", message: "Please select a student before saving." });
+      return false;
+    }
+    if (!formData.topic || !formData.topic.trim()) {
+      setTopicError("Please provide a Topic / Lesson Unit.");
+      return false;
+    }
+    if (!formData.performance || formData.performance < 1) {
+      setError({ title: "Validation Error", message: "Please select a performance rating (1 to 5 stars)." });
       return false;
     }
     
@@ -308,10 +367,8 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
       if (insertError) throw insertError;
 
       onSuccess();
+      resetForm();
       onClose();
-      // Reset form (simplified for brevity)
-      setTimerSeconds(0);
-      setTimerStatus('idle');
       return true;
     } catch (err: any) {
       setError({ title: "Sync Error", message: err.message || "Failed to log session" });
@@ -334,9 +391,9 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
   const labelClass = "text-[12px] font-bold uppercase tracking-wider text-[#7F8C8D] mb-1.5 block";
   const inputClass = "w-full px-4 py-2.5 rounded-[6px] bg-[#F5F5F5] border border-transparent focus:border-[#1a3a52] focus:bg-white outline-none transition-all duration-200 text-[#2C3E50] placeholder:text-[#7F8C8D]/50";
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-[#FFFFFF] rounded-[12px] w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[95vh] font-['Inter',_sans-serif]">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#FFFFFF] rounded-[12px] w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[95vh] font-['Inter',_sans-serif] overscroll-contain my-auto">
         
         {/* Header Section */}
         <div style={{ backgroundColor: colors.navy }} className="h-16 px-6 flex items-center justify-between shrink-0 border-b border-white/10">
@@ -350,7 +407,11 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
             </div>
           </div>
           <button 
-            onClick={onClose} 
+            onClick={() => {
+              resetForm();
+              setShareLink(null);
+              onClose();
+            }} 
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-all text-[#D4AF37] active:scale-95"
           >
             <X size={24} />
@@ -358,51 +419,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
         </div>
 
         {/* Content Section */}
-        {shareLink ? (
-          <div className="flex-1 overflow-y-auto p-8 text-center flex flex-col items-center justify-center space-y-6 bg-[#F8FAFC]">
-            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-2 border border-emerald-100">
-              <CheckCircle2 className="text-emerald-500" size={32} />
-            </div>
-            
-            <div>
-              <h3 className="text-xl font-bold text-[#1E3A5F] tracking-tight">Session Logged!</h3>
-              <p className="text-[#7F8C8D] mt-2 max-w-sm mx-auto text-sm leading-relaxed">
-                The session details have been saved successfully to your atelier. You can now share the progress report with the parent.
-              </p>
-            </div>
-
-            <div className="w-full max-w-sm flex flex-col gap-3 pt-4">
-              <a
-                href={shareLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  onClose();
-                  setShareLink(null);
-                  setTimerSeconds(0);
-                  setTimerStatus('idle');
-                }}
-                className="w-full h-14 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl shadow-[#25D366]/20"
-                style={{ textDecoration: 'none' }}
-              >
-                <Share2 className="fill-white" size={20} />
-                SHARE TO WHATSAPP
-              </a>
-              <button
-                onClick={() => {
-                  onClose();
-                  setShareLink(null);
-                  setTimerSeconds(0);
-                  setTimerStatus('idle');
-                }}
-                className="w-full h-14 border-2 border-slate-200 text-[#1E3A5F] rounded-xl font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[#F8FAFC]">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-[#F8FAFC]">
             
             {/* Section 1: Session Details */}
             <div className="grid grid-cols-2 gap-4">
@@ -514,10 +531,19 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                   required
                   type="text"
                   placeholder="e.g. Quantum Mechanics - Photoelectric Effect"
-                  className={inputClass}
+                  className={`${inputClass} ${topicError ? '!border-[#BA1A1A] !bg-error-container/20 text-[#BA1A1A] placeholder:text-[#BA1A1A]/50' : ''}`}
                   value={formData.topic}
-                  onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, topic: e.target.value });
+                    if (e.target.value.trim()) setTopicError(null);
+                  }}
                 />
+                {topicError && (
+                  <p className="text-[11px] font-bold text-[#BA1A1A] mt-1 flex items-center gap-1">
+                    <AlertTriangle size={14} />
+                    {topicError}
+                  </p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className={labelClass}>Detailed Notes</label>
@@ -629,8 +655,10 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
           {/* Session Assessment Section */}
           <div className="bg-white rounded-2xl p-6 shadow-ambient space-y-6 border border-[#1E3A5F]/5">
             <div className="grid grid-cols-2 gap-8">
-              <div className="space-y-2">
-                <label className={labelClass}>Performance</label>
+              <div className={`space-y-2 p-3 rounded-xl transition-all ${error && formData.performance < 1 ? "bg-rose-50 border border-rose-300 animate-shake" : ""}`}>
+                <label className={`${labelClass} ${error && formData.performance < 1 ? "!text-rose-600 font-extrabold" : ""}`}>
+                  Performance {error && formData.performance < 1 && <span className="text-rose-600">*Required</span>}
+                </label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button
@@ -639,7 +667,7 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
                       onClick={() => setFormData({ ...formData, performance: s })}
                       className="transition-all duration-300 ease-out hover:scale-125 active:scale-95"
                     >
-                      <Star size={28} className={`transition-colors ${s <= formData.performance ? "text-[#D4AF37] fill-[#D4AF37]" : "text-[#7F8C8D] opacity-20"}`} />
+                      <Star size={28} className={`transition-colors ${s <= formData.performance ? "text-[#D4AF37] fill-[#D4AF37]" : error && formData.performance < 1 ? "text-rose-500 opacity-60" : "text-[#7F8C8D] opacity-20"}`} />
                     </button>
                   ))}
                 </div>
@@ -658,48 +686,41 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
             </div>
           </div>
         </div>
-      )}
 
         {/* Sticky Footer */}
-        {!shareLink && (
-          <div className="sticky bottom-0 px-8 py-6 border-t border-[#1E3A5F]/5 bg-white flex flex-col md:flex-row gap-4 shrink-0 shadow-[0_-10px_40px_-15px_rgba(30,58,95,0.1)]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 h-14 rounded-xl border-2 border-slate-200 text-[#1E3A5F] font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={loading || !formData.studentId}
-              style={{ border: `2px solid ${colors.navy}`, color: colors.navy }}
-              className="flex-1 h-14 rounded-xl font-bold hover:bg-slate-50 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs flex items-center justify-center gap-3 active:scale-95"
-            >
-              {loading ? "Processing..." : "Finalize & Log"}
-            </button>
-            <button
-              type="button"
-              onClick={handleFinalizeAndShare}
-              disabled={loading || !formData.studentId}
-              style={{ backgroundColor: colors.navy }}
-              className="flex-1 h-14 rounded-xl text-white font-bold hover:opacity-95 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs shadow-xl shadow-[#1E3A5F]/20 flex items-center justify-center gap-3 active:scale-95"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  Log & Share
-                  <Share2 size={18} style={{ color: '#25D366' }} />
-                </>
-              )}
-            </button>
-          </div>
-        )}
+        <div className="sticky bottom-0 px-8 py-6 border-t border-[#1E3A5F]/5 bg-white flex flex-col md:flex-row gap-4 shrink-0 shadow-[0_-10px_40px_-15px_rgba(30,58,95,0.1)]">
+          <button
+            type="button"
+            onClick={() => {
+              resetForm();
+              setShareLink(null);
+              onClose();
+            }}
+            className="flex-1 h-14 rounded-xl border-2 border-slate-200 text-[#1E3A5F] font-bold hover:bg-slate-50 transition-all uppercase tracking-[0.15em] text-xs"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleFinalizeAndShare}
+            disabled={loading || !formData.studentId}
+            style={{ backgroundColor: colors.navy }}
+            className="flex-[2] h-14 rounded-xl text-white font-bold hover:opacity-95 transition-all disabled:opacity-40 uppercase tracking-[0.15em] text-xs shadow-xl shadow-[#1E3A5F]/20 flex items-center justify-center gap-3 active:scale-95"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Log & Share
+                <Share2 size={18} style={{ color: '#25D366' }} />
+              </>
+            )}
+          </button>
+        </div>
+
       </div>
 
       <style jsx global>{`
@@ -748,7 +769,8 @@ export default function QuickLogModal({ isOpen, onClose, onSuccess, studentId, s
           cursor: pointer;
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
 

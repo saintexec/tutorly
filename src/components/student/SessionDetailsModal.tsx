@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { generateWhatsAppLinkWithPhone } from "@/lib/whatsapp";
 import toast from "react-hot-toast";
 import { X, Star, FileText, Sparkles, Share2 } from "lucide-react";
@@ -27,8 +28,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
       return;
     }
 
-    // Open a blank window IMMEDIATELY on click (before any async work)
-    const newWindow = window.open("", "_blank");
+    const loadingToast = toast.loading("Generating WhatsApp share link...");
 
     try {
       const studentData = {
@@ -42,21 +42,33 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
 
       const { link } = await generateWhatsAppLinkWithPhone(studentData, student.parent_whatsapp || "");
 
-      if (newWindow) {
-        newWindow.location.href = link;
-      }
+      toast.dismiss(loadingToast);
+      toast.success("Opening WhatsApp...");
+
+      const a = document.createElement("a");
+      a.href = link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     } catch (error) {
+      toast.dismiss(loadingToast);
       console.error("Error generating WhatsApp link:", error);
-      if (newWindow) {
-        newWindow.close();
-      }
+      toast.error("Failed to generate WhatsApp link");
     }
   };
 
-  if (!isOpen || !session) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="fixed inset-0 z-[110] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !session || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 w-screen h-screen z-[99999] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300 overflow-y-auto">
       
       {/* Centered Modal / Bottom Sheet */}
       <div 
@@ -182,6 +194,7 @@ export default function SessionDetailsModal({ isOpen, onClose, session, student 
           background: #1E3A5F44;
         }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
